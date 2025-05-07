@@ -1,16 +1,51 @@
+'use client'
 import Link from "next/link"
 import Image from "next/image"
+import { useState, useEffect } from 'react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { ArrowRight, Dumbbell, Users, Calendar, Search } from "lucide-react"
+import { ArrowRight, Dumbbell, Users, Calendar, Search, Menu, Sun, Moon } from "lucide-react"
 
 export default function LandingPage() {
+  const [isDarkMode, setIsDarkMode] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false)
+
+  // Load dark mode preference from localStorage
+  useEffect(() => {
+    const storedTheme = localStorage.getItem("theme")
+    if (storedTheme === "dark") {
+      setIsDarkMode(true)
+      document.documentElement.classList.add("dark")
+    }
+  }, [])
+
+  // Toggle dark mode
+  const toggleDarkMode = () => {
+    const newMode = !isDarkMode
+    setIsDarkMode(newMode)
+    if (newMode) {
+      document.documentElement.classList.add("dark")
+      localStorage.setItem("theme", "dark")
+    } else {
+      document.documentElement.classList.remove("dark")
+      localStorage.setItem("theme", "light")
+    }
+  }
+
   return (
-    <div className="flex min-h-screen flex-col">
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <div className={`flex min-h-screen flex-col ${isDarkMode ? "bg-[#04172d] text-white" : "bg-white text-black"}`}>
+      <header    className={`sticky top-0 z-50 w-full border-b ${
+          isDarkMode ? "bg-[#04172d]" : "bg-[#faf6eb]"
+        } backdrop-blur supports-[backdrop-filter]:bg-opacity-90`}>
         <div className="container flex h-16 items-center justify-between">
           <div className="flex items-center gap-2">
-            <Dumbbell className="h-6 w-6 text-rose-600" />
+            <Image
+              src={isDarkMode ? "/logo2.jpg" : "/logo1.jpg"}
+              alt="Spotter Logo"
+              width={42}
+              height={42}
+              className="h-16 w-16"
+            />
             <span className="text-xl font-bold">Spotter</span>
           </div>
           <nav className="hidden md:flex gap-6">
@@ -20,14 +55,22 @@ export default function LandingPage() {
             <Link href="#how-it-works" className="text-sm font-medium transition-colors hover:text-foreground/80">
               Cómo funciona
             </Link>
-            <Link href="#testimonials" className="text-sm font-medium transition-colors hover:text-foreground/80">
-              Testimonios
-            </Link>
-            <Link href="#faq" className="text-sm font-medium transition-colors hover:text-foreground/80">
-              FAQ
-            </Link>
           </nav>
-          <div className="flex items-center gap-4">
+          <div className="hidden md:flex items-center gap-4">
+          <div
+              className={`flex items-center gap-2 p-1 rounded-full ${
+                isDarkMode ? "bg-gray-700" : "bg-gray-300"
+              } cursor-pointer`}
+              onClick={toggleDarkMode}
+            >
+              <Sun className={`h-4 w-4 ${!isDarkMode ? "text-yellow-500" : "text-gray-400"}`} />
+              <div
+                className={`w-6 h-6 rounded-full transition-transform ${
+                  isDarkMode ? "translate-x-6 bg-gray-900" : "translate-x-0 bg-white"
+                }`}
+              ></div>
+              <Moon className={`h-4 w-4 ${isDarkMode ? "text-blue-500" : "text-gray-400"}`} />
+            </div>
             <a href="/login">
               <Button className="hidden md:inline-flex bg-rose-600 text-white hover:bg-rose-700">
                 Iniciar sesión
@@ -39,7 +82,39 @@ export default function LandingPage() {
               </Button>
             </a>
           </div>
+          <button
+            className="md:hidden flex items-center"
+            onClick={() => setMenuOpen(!menuOpen)}
+          >
+            <Menu className="h-6 w-6" />
+          </button>
         </div>
+        {menuOpen && (
+          <div className="md:hidden flex flex-col items-center gap-4 p-4 bg-background">
+            <Link href="#features" className="text-sm font-medium transition-colors hover:text-foreground/80">
+              Características
+            </Link>
+            <Link href="#how-it-works" className="text-sm font-medium transition-colors hover:text-foreground/80">
+              Cómo funciona
+            </Link>
+            <Link href="#testimonials" className="text-sm font-medium transition-colors hover:text-foreground/80">
+              Testimonios
+            </Link>
+            <label className="flex items-center gap-2">
+              <span className="text-sm">Modo oscuro</span>
+              <input
+                type="checkbox"
+                checked={isDarkMode}
+                onChange={toggleDarkMode}
+                className="toggle-checkbox"
+              />
+            </label>
+            <Link href="/login" className="text-sm font-medium hover:underline underline-offset-4">
+              Iniciar sesión
+            </Link>
+            <Button>Registrarse</Button>
+          </div>
+        )}
       </header>
       <main className="flex-1">
         <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48">
@@ -66,7 +141,7 @@ export default function LandingPage() {
                 </div>
               </div>
               <Image
-                src="/placeholder.svg?height=550&width=550"
+                src="https://media.istockphoto.com/id/513434400/es/foto/bros-trabajar-conjuntamente-en-un-gimnasio.jpg?s=612x612&w=0&k=20&c=r3JSlTcklM39VysfJ0SnH9lEeslRTcPXMvP_MIdxXIA="
                 width={550}
                 height={550}
                 alt="Hero"
@@ -352,7 +427,13 @@ export default function LandingPage() {
       <footer className="w-full border-t py-6 md:py-0">
         <div className="container flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
           <div className="flex items-center gap-2">
-            <Dumbbell className="h-6 w-6 text-rose-600" />
+            <Image
+              src={isDarkMode ? "/logo2.jpg" : "/logo1.jpg"}
+              alt="Spotter Logo"
+              width={32}
+              height={32}
+              className="h-8 w-8"
+            />
             <span className="text-xl font-bold">Spotter</span>
           </div>
           <p className="text-center text-sm leading-loose text-muted-foreground md:text-left">
