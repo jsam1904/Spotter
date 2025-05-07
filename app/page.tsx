@@ -28,10 +28,16 @@ export default function LandingPage() {
             </Link>
           </nav>
           <div className="flex items-center gap-4">
-            <Link href="/login" className="text-sm font-medium hover:underline underline-offset-4">
-              Iniciar sesión
-            </Link>
-            <Button>Registrarse</Button>
+            <a href="/login">
+              <Button className="hidden md:inline-flex bg-rose-600 text-white hover:bg-rose-700">
+                Iniciar sesión
+              </Button>
+            </a>
+            <a href="/signup">
+              <Button variant="outline" className="hidden md:inline-flex bg-black text-white hover:bg-rose-600">
+                Registrarse
+              </Button>
+            </a>
           </div>
         </div>
       </header>
