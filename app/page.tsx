@@ -422,7 +422,7 @@ export default function LandingPage() {
         <div className="container flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
           <div className="flex items-center gap-2">
             <Image
-              src={isDarkMode ? "/logo2.svg" : "/logo1.svg"}
+              src={isDarkMode ? "/logo2.jpg" : "/logo1.jpg"}
               alt="Spotter Logo"
               width={32}
               height={32}
