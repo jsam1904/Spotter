@@ -33,7 +33,7 @@ export default function SignupPage() {
   };
 
   return (
-    <div className={`flex min-h-screen flex-col ${isDarkMode ? "bg-[#04172d] text-white" : "bg-white text-black"}`}>
+    <div className={`flex min-h-screen flex-col transition duration-700 ease-in-out ${isDarkMode ? "bg-[#04172d] text-white" : "bg-white text-black"}`}>
       <div className="flex flex-1 flex-col items-center justify-center px-4 py-12">
         <div className="mx-auto w-full max-w-md space-y-6">
           <div className="flex flex-col items-center space-y-2 text-center">
