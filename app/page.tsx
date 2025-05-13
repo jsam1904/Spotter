@@ -76,16 +76,23 @@ export default function LandingPage() {
             <Button
                 variant="outline"
                 className={`hidden md:inline-flex ${
+
                   isDarkMode ? "bg-gray-800 text-white hover:bg-gray-700" : "bg-[#e6790c] text-white hover:bg-rose-700"
+
                 }`}
               >
                 Iniciar sesión
               </Button>
             </a>
             <a href="/signup">
-              <Button variant="outline" className="hidden md:inline-flex bg-black text-white hover:bg-rose-600">
-                Registrarse
-              </Button>
+              <Button
+                  variant="outline"
+                  className={`hidden md:inline-flex ${
+                    isDarkMode ? "bg-white text-black hover:bg-gray-800" : "bg-black text-white hover:bg-rose-200"
+                  }`}
+                >
+                  Registrarse
+                </Button>
             </a>
           </div>
           <button
@@ -103,6 +110,7 @@ export default function LandingPage() {
             <Link href="#how-it-works" className="text-sm font-medium transition-colors hover:text-foreground/80">
               Cómo funciona
             </Link>
+
             <div
             className={`relative flex items-center justify-between gap-2 p-1 px-0 rounded-full ${
               isDarkMode ? "bg-gray-700" : "bg-gray-300"
@@ -118,6 +126,7 @@ export default function LandingPage() {
               } z-10`} 
             ></div>
           </div>
+
 
           </div>
         )}
@@ -137,13 +146,22 @@ export default function LandingPage() {
                   </p>
                 </div>
                 <div className="flex flex-col gap-2 min-[400px]:flex-row">
-                  <Button size="lg" className="bg-rose-600 hover:bg-rose-700">
-                    Comenzar ahora
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
-                  <Button size="lg" variant="outline">
-                    Saber más
-                  </Button>
+                  <a href="/signup">
+                    <Button 
+                      size="lg"
+                      variant="outline"
+                      className={`${isDarkMode ? "bg-white text-black hover:bg-gray-800" : "bg-rose-600 text-white hover:bg-rose-700"}`}>
+                      Comenzar ahora
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  </a>
+                  <a>
+                    <Button size="lg" 
+                    variant="outline" 
+                    className={`${isDarkMode ? "bg-gray-800 text-white hover:bg-gray-700" : "bg-rose-600 text-white hover:bg-rose-700"}`}>
+                      Saber más
+                    </Button>
+                  </a>
                 </div>
               </div>
               <Image
@@ -349,9 +367,15 @@ export default function LandingPage() {
                 <p className="text-muted-foreground md:text-xl/relaxed">
                   Regístrate gratis y descubre todo lo que Spotter tiene para ofrecerte.
                 </p>
-                <Button size="lg" className="bg-rose-600 hover:bg-rose-700">
-                  Registrarse gratis
-                </Button>
+                <a href="/signup">
+                    <Button 
+                      size="lg"
+                      variant="outline"
+                      className={`${isDarkMode ? "bg-white text-black hover:bg-gray-800" : "bg-rose-600 text-white hover:bg-rose-700"}`}>
+                      Registrate Ahora
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  </a>
               </div>
               <div className="flex flex-col space-y-4 rounded-xl border bg-muted p-6">
                 <h3 className="text-xl font-bold">Busca compañeros cerca de ti</h3>
