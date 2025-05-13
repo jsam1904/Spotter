@@ -40,11 +40,11 @@ export default function LandingPage() {
         <div className="container flex h-16 items-center justify-between">
           <div className="flex items-center gap-2">
             <Image
-              src={isDarkMode ? "/logo2.jpg" : "/logo1.jpg"}
+              src={isDarkMode ? "/logo2.png" : "/logo1.png"}
               alt="Spotter Logo"
               width={42}
               height={42}
-              className="h-16 w-16 backdrop-blur supports-[backdrop-filter]:bg-opacity-90"
+              className="h-16 w-16"
             />
             <span className="text-xl font-bold">Spotter</span>
           </div>
@@ -75,11 +75,7 @@ export default function LandingPage() {
             <a href="/login">
             <Button
                 variant="outline"
-                className={`hidden md:inline-flex ${
-
-                  isDarkMode ? "bg-gray-800 text-white hover:bg-gray-700" : "bg-[#e6790c] text-white hover:bg-rose-700"
-
-                }`}
+                className={`hidden md:inline-flex ${isDarkMode ? "bg-gray-800 text-white hover:bg-gray-700" : "bg-[#e6790c] text-white hover:bg-rose-700"}`}
               >
                 Iniciar sesión
               </Button>
@@ -150,7 +146,7 @@ export default function LandingPage() {
                     <Button 
                       size="lg"
                       variant="outline"
-                      className={`${isDarkMode ? "bg-white text-black hover:bg-gray-800" : "bg-rose-600 text-white hover:bg-rose-700"}`}>
+                      className={`hidden md:inline-flex ${isDarkMode ? "bg-gray-800 text-white hover:bg-gray-700" : "bg-[#e6790c] text-white hover:bg-rose-700" }`}>
                       Comenzar ahora
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
@@ -158,7 +154,7 @@ export default function LandingPage() {
                   <a>
                     <Button size="lg" 
                     variant="outline" 
-                    className={`${isDarkMode ? "bg-gray-800 text-white hover:bg-gray-700" : "bg-rose-600 text-white hover:bg-rose-700"}`}>
+                    className={`hidden md:inline-flex ${isDarkMode ? "bg-white text-black hover:bg-gray-800" : "bg-black text-white hover:bg-rose-200"}`}>
                       Saber más
                     </Button>
                   </a>
@@ -371,7 +367,7 @@ export default function LandingPage() {
                     <Button 
                       size="lg"
                       variant="outline"
-                      className={`${isDarkMode ? "bg-white text-black hover:bg-gray-800" : "bg-rose-600 text-white hover:bg-rose-700"}`}>
+                      className={`hidden md:inline-flex ${isDarkMode ? "bg-gray-800 text-white hover:bg-gray-700" : "bg-[#e6790c] text-white hover:bg-rose-700"}`}>
                       Registrate Ahora
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
