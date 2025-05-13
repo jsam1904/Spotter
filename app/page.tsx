@@ -4,7 +4,7 @@ import Image from "next/image"
 import { useState, useEffect } from 'react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { ArrowRight, Dumbbell, Users, Calendar, Search, Menu, Sun, Moon } from "lucide-react"
+import { ArrowRight, Dumbbell, Users, Search, Menu, Sun, Moon, Calendar } from "lucide-react"
 
 export default function LandingPage() {
   const [isDarkMode, setIsDarkMode] = useState(false)
@@ -33,10 +33,10 @@ export default function LandingPage() {
   }
 
   return (
-    <div className={`flex min-h-screen flex-col ${isDarkMode ? "bg-[#04172d] text-white" : "bg-white text-black"}`}>
+    <div className={`flex min-h-screen flex-col transition duration-700 ease-in-out ${isDarkMode ? "bg-[#04172d] text-white" : "bg-white text-black"}`}>
       <header    className={`sticky top-0 z-50 w-full border-b ${
-          isDarkMode ? "bg-[#04172d]" : "bg-[#faf6eb]"
-        } backdrop-blur supports-[backdrop-filter]:bg-opacity-90`}>
+          isDarkMode ? "bg-[#01152b]" : "bg-[#faf6eb]"
+        } backdrop-blur supports-[backdrop-filter]:bg-opacity-95`}>
         <div className="container flex h-16 items-center justify-between">
           <div className="flex items-center gap-2">
             <Image
@@ -44,7 +44,7 @@ export default function LandingPage() {
               alt="Spotter Logo"
               width={42}
               height={42}
-              className="h-16 w-16"
+              className="h-16 w-16 backdrop-blur supports-[backdrop-filter]:bg-opacity-90"
             />
             <span className="text-xl font-bold">Spotter</span>
           </div>
@@ -58,21 +58,27 @@ export default function LandingPage() {
           </nav>
           <div className="hidden md:flex items-center gap-4">
           <div
-              className={`flex items-center gap-2 p-1 rounded-full ${
-                isDarkMode ? "bg-gray-700" : "bg-gray-300"
-              } cursor-pointer`}
-              onClick={toggleDarkMode}
-            >
-              <Sun className={`h-4 w-4 ${!isDarkMode ? "text-yellow-500" : "text-gray-400"}`} />
-              <div
-                className={`w-6 h-6 rounded-full transition-transform ${
-                  isDarkMode ? "translate-x-6 bg-gray-900" : "translate-x-0 bg-white"
-                }`}
-              ></div>
-              <Moon className={`h-4 w-4 ${isDarkMode ? "text-blue-500" : "text-gray-400"}`} />
-            </div>
+            className={`relative flex items-center justify-between gap-2 p-1 px-0 rounded-full ${
+              isDarkMode ? "bg-gray-700" : "bg-gray-300"
+            } cursor-pointer w-14`} 
+            onClick={toggleDarkMode}>
+            <Sun className={`h-4 w-4 ml-2 ${!isDarkMode ? "text-[#e6790c]" : "text-gray-400"}`} />
+            <Moon className={`h-4 w-4 mr-2 ${isDarkMode ? "text-blue-500" : "text-gray-400"}`} />
+            <div
+              className={`absolute w-8 h-6 rounded-full transition-transform ${
+                isDarkMode
+                  ? "translate-x-6 bg-gray-900/80" 
+                  : "translate-x-0 bg-white/60" 
+              } z-10`} 
+            ></div>
+          </div>
             <a href="/login">
-              <Button className="hidden md:inline-flex bg-rose-600 text-white hover:bg-rose-700">
+            <Button
+                variant="outline"
+                className={`hidden md:inline-flex ${
+                  isDarkMode ? "bg-gray-800 text-white hover:bg-gray-700" : "bg-[#e6790c] text-white hover:bg-rose-700"
+                }`}
+              >
                 Iniciar sesión
               </Button>
             </a>
@@ -97,22 +103,22 @@ export default function LandingPage() {
             <Link href="#how-it-works" className="text-sm font-medium transition-colors hover:text-foreground/80">
               Cómo funciona
             </Link>
-            <Link href="#testimonials" className="text-sm font-medium transition-colors hover:text-foreground/80">
-              Testimonios
-            </Link>
-            <label className="flex items-center gap-2">
-              <span className="text-sm">Modo oscuro</span>
-              <input
-                type="checkbox"
-                checked={isDarkMode}
-                onChange={toggleDarkMode}
-                className="toggle-checkbox"
-              />
-            </label>
-            <Link href="/login" className="text-sm font-medium hover:underline underline-offset-4">
-              Iniciar sesión
-            </Link>
-            <Button>Registrarse</Button>
+            <div
+            className={`relative flex items-center justify-between gap-2 p-1 px-0 rounded-full ${
+              isDarkMode ? "bg-gray-700" : "bg-gray-300"
+            } cursor-pointer w-14`} 
+            onClick={toggleDarkMode}>
+            <Sun className={`h-4 w-4 ml-2 ${!isDarkMode ? "text-[#e6790c]" : "text-gray-400"}`} />
+            <Moon className={`h-4 w-4 mr-2 ${isDarkMode ? "text-blue-500" : "text-gray-400"}`} />
+            <div
+              className={`absolute w-8 h-6 rounded-full transition-transform ${
+                isDarkMode
+                  ? "translate-x-6 bg-gray-900/80"
+                  : "translate-x-0 bg-white/60" 
+              } z-10`} 
+            ></div>
+          </div>
+
           </div>
         )}
       </header>
@@ -188,7 +194,7 @@ export default function LandingPage() {
               </div>
               <div className="flex flex-col items-center space-y-4 rounded-lg border p-6">
                 <div className="flex h-16 w-16 items-center justify-center rounded-full bg-rose-100">
-                  <Calendar className="h-8 w-8 text-rose-600" />
+                    <Calendar className="h-8 w-8 text-rose-600" />
                 </div>
                 <h3 className="text-xl font-bold">Seguimiento de progreso</h3>
                 <p className="text-center text-muted-foreground">
