@@ -56,9 +56,6 @@ export default function LoginPage() {
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <Label htmlFor="password">Contraseña</Label>
-                <Link href="/forgot-password" className={`text-xs ${isDarkMode ? "text-gray-400 hover:underline" : "text-[#e6790c] hover:underline"}`}>
-                  ¿Olvidaste tu contraseña?
-                </Link>
               </div>
               <Input id="password" type="password" />
             </div>
