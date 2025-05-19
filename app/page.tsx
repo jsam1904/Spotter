@@ -33,7 +33,7 @@ export default function LandingPage() {
   }
 
   return (
-    <div className={`flex min-h-screen flex-col transition duration-700 ease-in-out ${isDarkMode ? "bg-[#04172d] text-white" : "bg-white text-black"}`}>
+    <div className={`flex min-h-screen flex-col transition duration-700 ease-in-out ${isDarkMode ? "bg-[#222b4b] text-white" : "bg-white text-black"}`}>
       <header    className={`sticky top-0 z-50 w-full border-b ${
           isDarkMode ? "bg-[#01152b]" : "bg-[#faf6eb]"
         } backdrop-blur supports-[backdrop-filter]:bg-opacity-95`}>
@@ -175,7 +175,7 @@ export default function LandingPage() {
           <div className="container px-4 md:px-6">
             <div className="flex flex-col items-center justify-center space-y-4 text-center">
               <div className="space-y-2">
-                <div className="inline-block rounded-lg bg-rose-100 px-3 py-1 text-sm text-rose-700">
+                <div className={`${isDarkMode ? "inline-block rounded-lg bg-[#01152b] px-3 py-1 text-sm text-white" : "inline-block rounded-lg bg-[#e6790c] px-3 py-1 text-sm text-white" }`}>
                   Características
                 </div>
                 <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
@@ -189,8 +189,8 @@ export default function LandingPage() {
             </div>
             <div className="mx-auto grid max-w-5xl items-center gap-6 py-12 lg:grid-cols-3">
               <div className="flex flex-col items-center space-y-4 rounded-lg border p-6">
-                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-rose-100">
-                  <Dumbbell className="h-8 w-8 text-rose-600" />
+                <div className={`flex h-16 w-16 items-center justify-center rounded-full ${isDarkMode ? "bg-[#01152b]" : "bg-rose-100"}`}>
+                  <Dumbbell className={`${isDarkMode ? "h-8 w-8 text-white" : "h-8 w-8 text-[#e6790c]" }`} />
                 </div>
                 <h3 className="text-xl font-bold">Rutinas personalizadas</h3>
                 <p className="text-center text-muted-foreground">
@@ -198,8 +198,8 @@ export default function LandingPage() {
                 </p>
               </div>
               <div className="flex flex-col items-center space-y-4 rounded-lg border p-6">
-                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-rose-100">
-                  <Users className="h-8 w-8 text-rose-600" />
+                <div className={`flex h-16 w-16 items-center justify-center rounded-full ${isDarkMode ? "bg-[#01152b]" : "bg-rose-100"}`}>
+                  <Users className={`${isDarkMode ? "h-8 w-8 text-white" : "h-8 w-8 text-[#e6790c]" }`} />
                 </div>
                 <h3 className="text-xl font-bold">Encuentra compañeros</h3>
                 <p className="text-center text-muted-foreground">
@@ -207,8 +207,8 @@ export default function LandingPage() {
                 </p>
               </div>
               <div className="flex flex-col items-center space-y-4 rounded-lg border p-6">
-                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-rose-100">
-                    <Calendar className="h-8 w-8 text-rose-600" />
+                <div className={`flex h-16 w-16 items-center justify-center rounded-full ${isDarkMode ? "bg-[#01152b]" : "bg-rose-100"}`}>
+                    <Calendar className={`${isDarkMode ? "h-8 w-8 text-white" : "h-8 w-8 text-[#e6790c]" }`} />
                 </div>
                 <h3 className="text-xl font-bold">Seguimiento de progreso</h3>
                 <p className="text-center text-muted-foreground">
@@ -223,7 +223,8 @@ export default function LandingPage() {
           <div className="container px-4 md:px-6">
             <div className="flex flex-col items-center justify-center space-y-4 text-center">
               <div className="space-y-2">
-                <div className="inline-block rounded-lg bg-rose-100 px-3 py-1 text-sm text-rose-700">Cómo funciona</div>
+                <div className={`${isDarkMode ? "inline-block rounded-lg bg-[#01152b] px-3 py-1 text-sm text-white" : "inline-block rounded-lg bg-[#e6790c] px-3 py-1 text-sm text-white" }`}>
+                  Cómo funciona</div>
                 <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">Simple, rápido y efectivo</h2>
                 <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
                   En solo unos pasos podrás comenzar a utilizar todas las funcionalidades de Spotter.
@@ -232,7 +233,7 @@ export default function LandingPage() {
             </div>
             <div className="mx-auto grid max-w-5xl items-center gap-6 py-12 lg:grid-cols-2">
               <Image
-                src="/placeholder.svg?height=400&width=500"
+                src="https://media.istockphoto.com/id/513434400/es/foto/bros-trabajar-conjuntamente-en-un-gimnasio.jpg?s=612x612&w=0&k=20&c=r3JSlTcklM39VysfJ0SnH9lEeslRTcPXMvP_MIdxXIA="
                 width={500}
                 height={400}
                 alt="Cómo funciona"
@@ -241,7 +242,7 @@ export default function LandingPage() {
               <div className="flex flex-col justify-center space-y-4">
                 <ul className="grid gap-6">
                   <li className="flex items-start gap-4">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-rose-100 text-rose-700">
+                    <div className={`h-8 w-8 ${isDarkMode ? "inline-block rounded-lg bg-[#01152b] px-3 py-1 text-sm text-white" : "inline-block rounded-lg bg-[#e6790c] px-3 py-1 text-sm text-white" }`}>
                       1
                     </div>
                     <div>
@@ -252,7 +253,7 @@ export default function LandingPage() {
                     </div>
                   </li>
                   <li className="flex items-start gap-4">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-rose-100 text-rose-700">
+                    <div className={`h-8 w-8 ${isDarkMode ? "inline-block rounded-lg bg-[#01152b] px-3 py-1 text-sm text-white" : "inline-block rounded-lg bg-[#e6790c] px-3 py-1 text-sm text-white" }`}>
                       2
                     </div>
                     <div>
@@ -263,7 +264,7 @@ export default function LandingPage() {
                     </div>
                   </li>
                   <li className="flex items-start gap-4">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-rose-100 text-rose-700">
+                    <div className={`h-8 w-8 ${isDarkMode ? "inline-block rounded-lg bg-[#01152b] px-3 py-1 text-sm text-white" : "inline-block rounded-lg bg-[#e6790c] px-3 py-1 text-sm text-white" }`}>
                       3
                     </div>
                     <div>
@@ -279,73 +280,25 @@ export default function LandingPage() {
           </div>
         </section>
 
-        <section id="testimonials" className="w-full py-12 md:py-24 lg:py-32 bg-muted">
+        <section id="vision" className="w-full py-12 md:py-24 lg:py-32 bg-muted">
           <div className="container px-4 md:px-6">
             <div className="flex flex-col items-center justify-center space-y-4 text-center">
               <div className="space-y-2">
-                <div className="inline-block rounded-lg bg-rose-100 px-3 py-1 text-sm text-rose-700">Testimonios</div>
-                <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">Lo que dicen nuestros usuarios</h2>
-                <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                  Descubre cómo Spotter ha ayudado a miles de personas a alcanzar sus metas fitness.
-                </p>
+                <div className="inline-block rounded-lg bg-rose-100 px-3 py-1 text-sm text-rose-700">Visión y Misión</div>
+                <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">Nuestra Misión y Visión</h2>
               </div>
             </div>
-            <div className="mx-auto grid max-w-5xl items-center gap-6 py-12 md:grid-cols-2 lg:grid-cols-3">
-              <div className="flex flex-col items-start space-y-4 rounded-lg border p-6">
-                <div className="flex items-center gap-4">
-                  <Image
-                    src="/placeholder.svg?height=40&width=40"
-                    width={40}
-                    height={40}
-                    alt="Avatar"
-                    className="rounded-full"
-                  />
-                  <div>
-                    <h3 className="font-bold">Carlos M.</h3>
-                    <p className="text-sm text-muted-foreground">Miembro desde 2023</p>
-                  </div>
-                </div>
-                <p className="text-muted-foreground">
-                  "Gracias a Spotter encontré un compañero de entrenamiento con mis mismos objetivos. Ahora vamos juntos
-                  al gimnasio y nos motivamos mutuamente."
+            <div className="mx-auto grid max-w-3xl items-center gap-6 py-12 md:grid-cols-2">
+              <div className="flex flex-col items-center space-y-4 rounded-lg border p-6 bg-white dark:bg-[#222b4b]">
+                <h3 className="text-2xl font-bold">Misión</h3>
+                <p className="text-muted-foreground text-center">
+                  Nuestra misión es conectar personas con objetivos fitness similares, facilitando el encuentro de compañeros de entrenamiento y ofreciendo rutinas personalizadas para que todos puedan alcanzar sus metas de salud y bienestar.
                 </p>
               </div>
-              <div className="flex flex-col items-start space-y-4 rounded-lg border p-6">
-                <div className="flex items-center gap-4">
-                  <Image
-                    src="/placeholder.svg?height=40&width=40"
-                    width={40}
-                    height={40}
-                    alt="Avatar"
-                    className="rounded-full"
-                  />
-                  <div>
-                    <h3 className="font-bold">Laura P.</h3>
-                    <p className="text-sm text-muted-foreground">Miembro desde 2022</p>
-                  </div>
-                </div>
-                <p className="text-muted-foreground">
-                  "Las rutinas personalizadas me han ayudado a progresar mucho más rápido. Además, la comunidad es
-                  increíble y muy motivadora."
-                </p>
-              </div>
-              <div className="flex flex-col items-start space-y-4 rounded-lg border p-6">
-                <div className="flex items-center gap-4">
-                  <Image
-                    src="/placeholder.svg?height=40&width=40"
-                    width={40}
-                    height={40}
-                    alt="Avatar"
-                    className="rounded-full"
-                  />
-                  <div>
-                    <h3 className="font-bold">Miguel A.</h3>
-                    <p className="text-sm text-muted-foreground">Miembro desde 2023</p>
-                  </div>
-                </div>
-                <p className="text-muted-foreground">
-                  "Soy principiante y gracias a Spotter pude encontrar rutinas adecuadas para mi nivel. Ahora entreno
-                  con confianza y veo resultados."
+              <div className="flex flex-col items-center space-y-4 rounded-lg border p-6 bg-white dark:bg-[#222b4b]">
+                <h3 className="text-2xl font-bold">Visión</h3>
+                <p className="text-muted-foreground text-center">
+                  Ser la plataforma líder en la creación de comunidades fitness, inspirando a millones de personas a transformar su vida a través del ejercicio, la motivación y el acompañamiento.
                 </p>
               </div>
             </div>

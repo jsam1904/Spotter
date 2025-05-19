@@ -83,9 +83,11 @@ export default function SignupPage() {
                 </Link>
               </label>
             </div>
-            <Button className={`hidden md:inline-flex ${isDarkMode ? "w-full bg-gray-800 text-white hover:bg-gray-700" : "w-full bg-[#e6790c] text-white hover:bg-rose-700"}`}>
-              Registrarse
-            </Button>
+            <Link href="/UserPage">
+              <Button className={`hidden md:inline-flex ${isDarkMode ? "w-full bg-gray-800 text-white hover:bg-gray-700" : "w-full bg-[#e6790c] text-white hover:bg-rose-700"}`}>
+                Registrarse
+              </Button>
+            </Link>
             <div className="relative flex items-center justify-center">
               <div className="absolute inset-0 flex items-center">
                 <span className="w-full border-t" />
