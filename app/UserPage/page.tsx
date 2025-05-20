@@ -5,14 +5,43 @@ import { useState, useEffect } from 'react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ArrowRight, Dumbbell, Users, Search, Menu, Sun, Moon, Calendar } from "lucide-react"
+import { useRouter } from "next/navigation";
+
 
 export default function LandingPage() {
   const [isDarkMode, setIsDarkMode] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
+  const [user, setUser] = useState<{ name?: string } | null>(null)
+  const router = useRouter();
+  
 
   // Load dark mode preference from localStorage
   useEffect(() => {
     const storedTheme = localStorage.getItem("theme")
+
+    try {
+      const tokenData = localStorage.getItem("token")
+      if (tokenData) {
+        const base64Url = tokenData.split('.')[1]
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/')
+        const jsonPayload = decodeURIComponent(
+          atob(base64)
+            .split('')
+            .map(function(c) {
+              return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
+            })
+            .join('')
+        )
+        const userObj = JSON.parse(jsonPayload)
+        setUser(userObj) // Guardar usuario en el estado
+      }else {
+        router.push('/login')
+      }
+    } catch (err) {
+      console.error("Error decoding token:", err)
+      router.push('/login')
+    }
+
     if (storedTheme === "dark") {
       setIsDarkMode(true)
       document.documentElement.classList.add("dark")
@@ -127,7 +156,7 @@ export default function LandingPage() {
               <div className="flex flex-col justify-center space-y-4">
                 <div className="space-y-2">
                   <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none">
-                    Bienvenido "Si logran poner el nombre del usuario estaria de ahuevo JAJAJAJAJA" a Spotter
+                    Bienvenido {user? `${user.name}` : "usuario"} a Spotter
                   </h1>
                   <p className="max-w-[600px] text-muted-foreground md:text-xl">
                     Esperamos que disfrutes de la experiencia de Spotter, donde puedes encontrar compañeros de entrenamiento, 
