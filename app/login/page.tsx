@@ -7,9 +7,16 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Sun, Moon } from "lucide-react";
 import { useEffect, useState } from "react";
+import axios from "axios";
+import Swal from "sweetalert2";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     const storedTheme = localStorage.getItem("theme");
@@ -31,6 +38,55 @@ export default function LoginPage() {
     }
   };
 
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    // Validaciones
+    if (!email || !password) {
+      Swal.fire({
+        icon: "error",
+        title: "Campos incompletos",
+        text: "Por favor, completa todos los campos.",
+      });
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      console.log("Iniciando sesión con:", { email, password });
+      const response = await axios.post("http://localhost:3000/login/", {
+        email, 
+        password,
+      });
+
+      if (response.data.success) {
+        Swal.fire({
+          icon: "success",
+          title: "Inicio de sesión exitoso",
+          text: "Bienvenido a Spotter",
+        }).then(() => {
+          localStorage.setItem("token", response.data.token);
+          router.push("/UserPage");
+        });
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: response.data.message || "Credenciales inválidas",
+        });
+      }
+    } catch (error: any) {
+      Swal.fire({
+        icon: "error",
+        title: "Error en el inicio de sesión",
+        text: error.response?.data?.error || "Ocurrió un error al iniciar sesión",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className={`flex min-h-screen flex-col transition duration-700 ease-in-out ${isDarkMode ? "bg-[#04172d] text-white" : "bg-white text-black"}`}>
       <div className="flex flex-1 flex-col items-center justify-center px-4 py-12">
@@ -48,22 +104,35 @@ export default function LoginPage() {
             <h1 className="text-2xl font-bold">Iniciar sesión</h1>
             <p className="text-sm text-muted-foreground">Ingresa tus credenciales para acceder a tu cuenta</p>
           </div>
-          <div className="space-y-4">
+          <form onSubmit={handleLogin} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" placeholder="ejemplo@correo.com" />
+              <Label htmlFor="">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="ejemplo@correo.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
             </div>
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <Label htmlFor="password">Contraseña</Label>
               </div>
-              <Input id="password" type="password" />
+              <Input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
             </div>
-            <Link href="UserPage">
-              <Button className={`hidden md:inline-flex ${isDarkMode ? "w-full bg-gray-800 text-white hover:bg-gray-700" : "w-full bg-[#e6790c] text-white hover:bg-rose-700"}`}>
-                Iniciar sesión
-              </Button>
-            </Link>
+            <Button
+              type="submit"
+              disabled={isLoading}
+              className={`w-full ${isDarkMode ? "bg-gray-800 text-white hover:bg-gray-700" : "bg-[#e6790c] text-white hover:bg-rose-700"}`}
+            >
+              {isLoading ? "Iniciando sesión..." : "Iniciar sesión"}
+            </Button>
             <div className="relative flex items-center justify-center">
               <div className="absolute inset-0 flex items-center">
                 <span className="w-full border-t" />
@@ -80,7 +149,7 @@ export default function LoginPage() {
                 Regístrate
               </Link>
             </div>
-          </div>
+          </form>
           <div
             className={`relative flex items-center justify-between gap-2 p-1 px-0 rounded-full ${
               isDarkMode ? "bg-gray-700" : "bg-gray-300"
