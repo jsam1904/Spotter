@@ -137,6 +137,8 @@ export default function UsersPage() {
             <th className="border border-gray-300 px-4 py-2 text-left">Nombre</th>
             <th className="border border-gray-300 px-4 py-2 text-left">Username</th>
             <th className="border border-gray-300 px-4 py-2 text-left">Email</th>
+            <th className="border border-gray-300 px-4 py-2 text-left">Edad</th>
+            <th className="border border-gray-300 px-4 py-2 text-left">Genero</th>
             <th className="border border-gray-300 px-4 py-2 text-left">User Type</th>
             <th className="border border-gray-300 px-4 py-2 text-left">Acciones</th>
           </tr>
@@ -167,6 +169,8 @@ export default function UsersPage() {
                 <td className="border border-gray-300 px-4 py-2">{user.name}</td>
                 <td className="border border-gray-300 px-4 py-2">{user.username}</td>
                 <td className="border border-gray-300 px-4 py-2">{user.email}</td>
+                <td className="border border-gray-300 px-4 py-2">{user.age}</td>
+                <td className="border border-gray-300 px-4 py-2">{user.gender}</td>
                 <td className="border border-gray-300 px-4 py-2">{user.user_type}</td>
                 <td className="border border-gray-300 px-4 py-2 space-x-2">
                   <button onClick={() => openEditModal(user)}

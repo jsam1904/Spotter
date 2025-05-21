@@ -8,7 +8,7 @@ export default class API {
         return res.json();
     }
 
-    static async registerUser(user: { name: string; username: string; password: string; email: string; user_type: string; }) {
+    static async registerUser(user: { name: string; username: string; password: string; email: string; user_type: string; age: string; gender: string; }) {
         const res = await fetch("http://localhost:3000/users/register", {
             method: "POST",
             headers: { "Content-Type": "application/json" },

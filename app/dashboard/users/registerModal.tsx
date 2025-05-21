@@ -18,13 +18,16 @@ export default function RegisterModal({ isOpen, onClose, onSuccess }: RegisterMo
     const [username, setUserName] = useState("");
     const [password, setPassword] = useState("");
     const [user_type, setUserType] = useState("User");
+    const [age, setAge] = useState("");
+    const [gender, setGender] = useState("");
+
 
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
         try {
-            await API.registerUser({ name, username, password, email, user_type });
+            await API.registerUser({ name, username, password, email, user_type, age, gender });
             Swal.fire({
                 icon: 'success',
                 title: 'Usuario registrado',
@@ -39,7 +42,9 @@ export default function RegisterModal({ isOpen, onClose, onSuccess }: RegisterMo
             setEmail("");
             setUserName("");
             setPassword("");
-            setUserType("User")
+            setUserType("User");
+            setAge("");
+            setGender("");
 
         } catch (err) {
             Swal.fire({
@@ -89,7 +94,20 @@ export default function RegisterModal({ isOpen, onClose, onSuccess }: RegisterMo
                             required
                         />
                         <TypesCombobox selectedRole={user_type} onRoleChange={setUserType} />
-
+                        <input
+                            className="w-full p-2 border rounded"
+                            placeholder="Edad"
+                            value={age}
+                            onChange={e => setAge(e.target.value)}
+                            required
+                        />
+                        <input
+                            className="w-full p-2 border rounded"
+                            placeholder="gender"
+                            value={gender}
+                            onChange={e => setGender(e.target.value)}
+                            required
+                        />
 
                         <div className="flex justify-end gap-2">
                             <button
