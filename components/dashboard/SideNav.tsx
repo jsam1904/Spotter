@@ -1,6 +1,5 @@
 "use client";
 
-// components/SideNav.tsx
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import clsx from "clsx";
@@ -9,7 +8,7 @@ const navItems = [
   { label: "Usuarios", href: "/dashboard/users" },
   { label: "Preferencias", href: "/dashboard/preferences" },
   { label: "Ubicaciones", href: "/dashboard/locations" },
-  // Agrega más secciones si necesitas
+  { label: "Ejercicios", href: "/dashboard/exercises" },
 ];
 
 export default function SideNav() {

@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import SideNav from "@/components/dashboard/SideNav"; // Ruta real de tu componente
+import SideNav from "@/components/dashboard/SideNav"; 
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
   return (
