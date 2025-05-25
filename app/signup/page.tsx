@@ -16,6 +16,8 @@ export default function SignupPage() {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+  const [age, setAge] = useState("");
+  const [gender, setGender] = useState("");
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -49,7 +51,7 @@ export default function SignupPage() {
     setIsLoading(true);
 
     // Validaciones
-    if (!firstName || !lastName || !email || !password || !confirmPassword || !username) {
+    if (!firstName || !lastName || !email || !password || !confirmPassword || !username || !age || !gender) {
       Swal.fire({
         icon: "error",
         title: "Campos incompletos",
@@ -83,6 +85,8 @@ export default function SignupPage() {
       const response = await axios.post("http://localhost:3000/users/register", {
         name: `${firstName} ${lastName}`,
         username,
+        age,
+        gender,
         email,
         password,
 
@@ -142,6 +146,32 @@ export default function SignupPage() {
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
                 />
+              </div>
+              <div>
+                <label htmlFor="age">Edad</label>
+                <Input
+                  id="age"
+                  type="number"
+                  placeholder="Edad"
+                  className="w-full"
+                  onChange={(e) => setAge(e.target.value)}
+                />
+              </div>
+              <div>
+                <label htmlFor="gender">Género</label>
+                <Label htmlFor="gender">Género</Label>
+                <select
+                  id="gender"
+                  name="gender"
+                  value={gender}
+                  onChange={(e) => setGender(e.target.value)}
+                  className="w-full border rounded px-3 py-2 bg-transparent focus:outline-none focus:ring-2 focus:ring-[#e6790c] dark:bg-[#04172d] dark:border-gray-600"
+                >
+                  <option value="">Selecciona una opción</option>
+                  <option value="Hombre">Hombre</option>
+                  <option value="Mujer">Mujer</option>
+                  <option value="Otro">Otro</option>
+                </select>
               </div>
             </div>
 
