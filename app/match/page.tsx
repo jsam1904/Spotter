@@ -6,7 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Button } from "../../components/ui/button";
 import { Card, CardContent } from "../../components/ui/card";
-import { MapPin, MessageSquare, Clock, X, Heart, Sun, Moon, Menu, Filter, ArrowLeft, ArrowRight } from "lucide-react";
+import { MapPin, MessageSquare, Clock, X, Heart, Sun, Moon, Menu, Filter, ArrowLeft, ArrowRight, Dumbbell } from "lucide-react";
 import { Slider } from "../../components/ui/slider";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select";
 import { motion, type PanInfo, useMotionValue, useTransform } from "framer-motion";
@@ -234,8 +234,8 @@ export default function FindMatches() {
             <Link href="/UserPage?tab=discover" className="text-sm font-medium transition-colors hover:text-foreground/80">
               Descubrir
             </Link>
-            <Link href="/UserPage?tab=messages" className="text-sm font-medium transition-colors hover:text-foreground/80">
-              Mensajes ({conversationsData.length})
+            <Link href="match/chats" className="text-sm font-medium transition-colors hover:text-foreground/80">
+              Mensajes 
             </Link>
             <Link href="/Psettings" className="text-sm font-medium transition-colors hover:text-foreground/80">
               Perfil
@@ -278,8 +278,8 @@ export default function FindMatches() {
             <Link href="/UserPage?tab=discover" className="text-sm font-medium transition-colors hover:text-foreground/80">
               Descubrir
             </Link>
-            <Link href="/UserPage?tab=messages" className="text-sm font-medium transition-colors hover:text-foreground/80">
-              Mensajes ({conversationsData.length})
+            <Link href="match/chats" className="text-sm font-medium transition-colors hover:text-foreground/80">
+              Mensajes
             </Link>
             <Link href="/Psettings" className="text-sm font-medium transition-colors hover:text-foreground/80">
               Perfil
@@ -460,7 +460,7 @@ export default function FindMatches() {
                           style={{ opacity: likeOpacity, scale: likeOpacity }}
                           initial={false}
                         >
-                          <Heart className="h-24 w-24 sm:h-8 sm:w-8 text-green-500" />
+                          <Dumbbell className="h-24 w-24 sm:h-8 sm:w-8 text-green-500" />
                         </motion.div>
                         <motion.div
                           className="absolute top-4 sm:top-8 right-4 sm:right-8 rounded-full border-4 border-red-500 bg-white/80 p-1 sm:p-2"
@@ -527,7 +527,7 @@ export default function FindMatches() {
                                   } border-2 flex items-center justify-center`}
                                 >
                                   <div className="relative flex items-center justify-center">
-                                    <Heart className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 text-green-500" />
+                                    <Dumbbell className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 text-green-500" />
                                     <ArrowRight className="absolute -right-4 h-4 w-4 text-green-500" />
                                   </div>
                                 </Button>
@@ -541,54 +541,7 @@ export default function FindMatches() {
             )}
           </div>
 
-          {/* Sección de mensajes */}
-          {new URLSearchParams(window.location.search).get("tab") === "messages" && (
-            <div className="space-y-3 md:space-y-4">
-              {conversationsData.length === 0 ? (
-                <div className="text-center py-8 md:py-12">
-                  <MessageSquare className="h-10 w-10 md:h-12 md:w-12 text-muted-foreground mx-auto mb-4" />
-                  <h3 className="text-lg font-medium">No hay mensajes</h3>
-                  <p className="text-muted-foreground">Comienza a conectar con otros usuarios</p>
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  {conversationsData.map((conversation) => (
-                    <Card key={conversation.id} className="cursor-pointer hover:bg-muted/50 transition-colors">
-                      <CardContent className="p-3 md:p-4">
-                        <div className="flex items-center">
-                          <div className="relative mr-3 md:mr-4 flex-shrink-0">
-                            <img
-                              src={conversation.user.image || "/placeholder.svg"}
-                              alt={conversation.user.name}
-                              className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover"
-                            />
-                            {conversation.unread && (
-                              <span className="absolute -top-1 -right-1 w-2.5 h-2.5 sm:w-3 sm:h-3 bg-rose-600 rounded-full border-2 border-background"></span>
-                            )}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex justify-between items-center">
-                              <h3 className="font-medium truncate">{conversation.user.name}</h3>
-                              <span className="text-xs text-muted-foreground ml-2 flex-shrink-0">
-                                {conversation.timestamp}
-                              </span>
-                            </div>
-                            <p
-                              className={`text-xs sm:text-sm line-clamp-1 ${
-                                conversation.unread ? "font-medium" : "text-muted-foreground"
-                              }`}
-                            >
-                              {conversation.lastMessage}
-                            </p>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
+
         </div>
       </main>
     </div>
