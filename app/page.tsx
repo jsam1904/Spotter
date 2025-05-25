@@ -35,7 +35,7 @@ export default function LandingPage() {
   return (
     <div className={`flex min-h-screen flex-col transition duration-700 ease-in-out ${isDarkMode ? "bg-[#222b4b] text-white" : "bg-white text-black"}`}>
       <header    className={`sticky top-0 z-50 w-full border-b ${
-          isDarkMode ? "bg-[#01152b]" : "bg-[#faf6eb]"
+          isDarkMode ? "bg-[#01152b]" : "bg-white"
         } backdrop-blur supports-[backdrop-filter]:bg-opacity-95`}>
         <div className="container flex h-16 items-center justify-between">
           <div className="flex items-center gap-2">
