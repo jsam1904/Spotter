@@ -79,7 +79,42 @@ export default class API {
         return await res.json();
     }
     //Exercises
+    static async registerExercise(exercise: { img: string; name: string; description: string; preference: string }) {
+        const res = await fetch(`http://localhost:3000/exercise/register`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(exercise), 
+        });
 
+        if (!res.ok) throw new Error("Failed to register exercise");
+
+        return res.json();
+    }
+    static async getExercises() {
+        const res = await fetch(`http://localhost:3000/exercise/getExercises`, { method: "GET" })
+
+        if (!res.ok) throw new Error("Failed to register exercise");
+
+        return res.json();
+    }
+    static async updateExercise(id: string, data: { img: string; name: string; description: string; preference: string }) {
+        const res = await fetch(`http://localhost:3000/exercise/update/${id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+        });
+        if (!res.ok) {
+            throw new Error("Error al actualizar el ejercicio");
+        }
+        return await res.json();
+    }
+    static async deleteExercise(id: string) {
+        const res = await fetch(`http://localhost:3000/exercise/delete/${id}`, { method: "DELETE" })
+
+        if (!res.ok) throw new Error("Failed to register location");
+
+        return res.json();
+    }
     //Locations
 
     static async getLocations() {

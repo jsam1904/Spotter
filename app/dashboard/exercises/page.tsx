@@ -4,26 +4,38 @@ import React, { useEffect, useState } from "react";
 import API from "@/lib/api";
 import Swal from "sweetalert2";
 import RegisterModal from "./registerModal";
-const USERS_PER_PAGE = 8;
+import UpdateModal from "./updateModal";
+import { Pencil, Trash2 } from "lucide-react";
+interface Exercise {
+    id: string;
+    img: string;
+    name: string;
+    description: string;
+    preference: string;
+}
+
+const EXERCISES_PER_PAGE = 8;
 
 export default function UsersPage() {
-    const [location, setLocation] = useState<any[]>([]);
+    const [exercise, setExercise] = useState<any[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [isDarkMode, setIsDarkMode] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
     const [term, setTerm] = useState('');
+    const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(null);
+
     const [isEditOpen, setIsEditOpen] = useState(false);
 
-    const fetchLocations = async () => {
-        const data = await API.getLocations();
-        setLocation(data);
+    const fetchExercises = async () => {
+        const data = await API.getExercises();
+        setExercise(data);
     };
-    const handleDelete = async (location: any) => {
-        console.log("location a eliminar:", location);
+    const handleDelete = async (exercise: any) => {
+        console.log("location a eliminar:", exercise);
         const result = await Swal.fire({
-            
+
             title: "¿Estás seguro?",
-            text: `Esto eliminará la ubicación "${location.name}".`, 
+            text: `Esto eliminará la ubicación "${exercise.name}".`,
             icon: "warning",
             showCancelButton: true,
             confirmButtonText: "Sí, eliminar",
@@ -32,7 +44,7 @@ export default function UsersPage() {
 
         if (result.isConfirmed) {
             try {
-                await API.deleteLocation(location.id); 
+                await API.deleteExercise(exercise.id);
                 Swal.fire({
                     icon: "success",
                     title: "Ubicación eliminada",
@@ -41,7 +53,7 @@ export default function UsersPage() {
                     showConfirmButton: false,
                 });
 
-                fetchLocations();
+                fetchExercises();
             } catch (err) {
                 Swal.fire({
                     icon: "error",
@@ -52,7 +64,7 @@ export default function UsersPage() {
         }
     };
     useEffect(() => {
-        fetchLocations();
+        fetchExercises();
 
         const storedTheme = localStorage.getItem("theme");
         if (storedTheme === "dark") {
@@ -61,19 +73,27 @@ export default function UsersPage() {
         }
     }, []);
 
-    // Filtrar + paginar usuarios
-    const filteredPreferences = location.filter(location => {
+    const openEditModal = (exercise: Exercise) => {
+        setSelectedExercise(exercise);
+        setIsEditOpen(true);
+    };
+
+    const filteredExercise = exercise.filter(exercise => {
         const lowerTerm = term.toLowerCase();
+        const prefString = Array.isArray(exercise.preference)
+            ? exercise.preference.join(", ")
+            : (exercise.preference ?? "");
         return (
-            location.name?.toLowerCase().includes(lowerTerm)
+            exercise.name?.toLowerCase().includes(lowerTerm) ||
+            prefString.toLowerCase().includes(lowerTerm)
         );
     });
 
 
-    const totalPages = Math.ceil(filteredPreferences.length / USERS_PER_PAGE);
-    const indexOfLastUser = currentPage * USERS_PER_PAGE;
-    const indexOfFirstUser = indexOfLastUser - USERS_PER_PAGE;
-    const paginatedUsers = filteredPreferences.slice(indexOfFirstUser, indexOfLastUser);
+    const totalPages = Math.ceil(filteredExercise.length / EXERCISES_PER_PAGE);
+    const indexOfLastUser = currentPage * EXERCISES_PER_PAGE;
+    const indexOfFirstUser = indexOfLastUser - EXERCISES_PER_PAGE;
+    const paginatedUsers = filteredExercise.slice(indexOfFirstUser, indexOfLastUser);
 
     function goToPage(page: number) {
         if (page < 1 || page > totalPages) return;
@@ -83,23 +103,23 @@ export default function UsersPage() {
     return (
         <div className="p-6 max-w-6xl mx-auto bg-background">
             <div className="flex justify-between items-center mb-6">
-                <h1 className="text-3xl font-bold">Preferencias</h1>
+                <h1 className="text-3xl font-bold">Ejercicios</h1>
                 <button
                     onClick={() => setIsOpen(true)}
                     className="bg-[#e6790c] text-white px-4 py-2 rounded hover:bg-green-700"
                 >
-                    + Agregar Usuario
+                    + Agregar Ejercicio
                 </button>
                 <RegisterModal
                     isOpen={isOpen}
                     onClose={() => setIsOpen(false)}
-                    onSuccess={fetchLocations}
+                    onSuccess={fetchExercises}
                 />
             </div>
 
             <input
                 type="text"
-                placeholder="Buscar por nombre, username o email"
+                placeholder="Buscar por nombre o preferencia"
                 value={term}
                 onChange={(e) => {
                     setTerm(e.target.value);
@@ -111,7 +131,10 @@ export default function UsersPage() {
             <table className="min-w-full border border-gray-300 border-collapse">
                 <thead>
                     <tr className={`${isDarkMode ? "bg-[#01152b]" : "bg-white"}`}>
+                        <th className="border border-gray-300 px-4 py-2 text-left">Imagen</th>
                         <th className="border border-gray-300 px-4 py-2 text-left">Nombre</th>
+                        <th className="border border-gray-300 px-4 py-2 text-left">Descripción</th>
+                        <th className="border border-gray-300 px-4 py-2 text-left">Prefencia vinculada</th>
                         <th className="border border-gray-300 px-4 py-2 text-left">Acciones</th>
                     </tr>
                 </thead>
@@ -123,22 +146,38 @@ export default function UsersPage() {
                             </td>
                         </tr>
                     ) : (
-                        paginatedUsers.map((location) => (
-                            <tr key={location.id} className="hover:bg-gray-50">
-                                <td className="border border-gray-300 px-4 py-2">{location.name}</td>
+                        paginatedUsers.map((exercise) => (
+                            <tr key={exercise.id} className="hover:bg-gray-50">
+                                <td className="border border-gray-300 px-4 py-2">
+                                    {exercise.img ? (
+                                        <img
+                                            src={exercise.img}
+                                            alt={exercise.name}
+                                            className="w-16 h-16 object-cover rounded-md border"
+                                        />
+                                    ) : (
+                                        <div className="w-16 h-16 bg-gray-200 flex items-center justify-center rounded-md text-gray-400">
+                                            Sin imagen
+                                        </div>
+                                    )}
+                                </td>
+                                <td className="border border-gray-300 px-4 py-2">{exercise.name}</td>
+                                <td className="border border-gray-300 px-4 py-2">{exercise.description}</td>
+                                <td className="border border-gray-300 px-4 py-2">{exercise.preference}</td>
                                 <td className="border border-gray-300 px-4 py-2 space-x-2">
                                     <button
-
-                                        className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600"
+                                        onClick={() => openEditModal(exercise)}
+                                        className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                                        title="Editar"
                                     >
-                                        Editar
+                                        <Pencil size={18} />
                                     </button>
-
                                     <button
-                                        onClick={() => handleDelete(location)}
-                                        className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
+                                        onClick={() => handleDelete(exercise)}
+                                        className="p-2 bg-red-500 text-white rounded hover:bg-red-600"
+                                        title="Eliminar"
                                     >
-                                        Eliminar
+                                        <Trash2 size={18} />
                                     </button>
                                 </td>
                             </tr>
@@ -146,7 +185,12 @@ export default function UsersPage() {
                     )}
                 </tbody>
             </table>
-
+            <UpdateModal
+                isOpen={isEditOpen}
+                onClose={() => setIsEditOpen(false)}
+                exercise={selectedExercise}
+                onSuccess={fetchExercises}
+            />
             <div className="flex justify-center mt-4 space-x-2">
                 <button
                     onClick={() => goToPage(currentPage - 1)}
