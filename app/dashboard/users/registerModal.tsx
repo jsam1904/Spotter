@@ -21,8 +21,6 @@ export default function RegisterModal({ isOpen, onClose, onSuccess }: RegisterMo
     const [gender, setGender] = useState("Masculino");
     const [age, setAge] = useState("");
     const [user_type, setUserType] = useState("User");
-    const [age, setAge] = useState("");
-    const [gender, setGender] = useState("");
 
 
 
