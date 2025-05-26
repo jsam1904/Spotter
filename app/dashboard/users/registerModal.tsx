@@ -21,6 +21,9 @@ export default function RegisterModal({ isOpen, onClose, onSuccess }: RegisterMo
     const [gender, setGender] = useState("Masculino");
     const [age, setAge] = useState("");
     const [user_type, setUserType] = useState("User");
+    const [age, setAge] = useState("");
+    const [gender, setGender] = useState("");
+
 
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -28,6 +31,7 @@ export default function RegisterModal({ isOpen, onClose, onSuccess }: RegisterMo
 
         try {
             await API.registerUser({ name, username, password, email, gender, age, user_type });
+
             Swal.fire({
                 icon: 'success',
                 title: 'Usuario registrado',
@@ -103,7 +107,6 @@ export default function RegisterModal({ isOpen, onClose, onSuccess }: RegisterMo
                         />
                         <TypesCombobox selectedRole={user_type} onRoleChange={setUserType} />
                         <GenderComboBox selectedRole={gender} onRoleChange={setGender} />
-
 
                         <div className="flex justify-end gap-2">
                             <button
