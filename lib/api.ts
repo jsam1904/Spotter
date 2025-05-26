@@ -8,7 +8,7 @@ export default class API {
         return res.json();
     }
 
-    static async registerUser(user: { name: string; username: string; password: string; email: string; user_type: string; age: string; gender: string; }) {
+    static async registerUser(user: { name: string; username: string; password: string; email: string; gender: string; age: string; user_type: string; }) {
         const res = await fetch("http://localhost:3000/users/register", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -28,8 +28,12 @@ export default class API {
         }
         return await res.json();
     }
-    static async updateUser(username: string, data: { name: string, email: string }) {
-        const res = await fetch(`http://localhost:3000/users/updateUser/${username}`, { method: "PUT", })
+    static async updateUser(username: string, data: { name: string; email: string; gender: string; age: string; user_type: string; }) {
+        const res = await fetch(`http://localhost:3000/users/updateUser/${username}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+        })
         if (!res.ok) {
             throw new Error("Error al actualizar usuario");
         }
@@ -56,14 +60,98 @@ export default class API {
         return res.json();
     }
 
-    static async deletePreference(name: string) {
-        const res = await fetch(`http://localhost:3000/preference/delete/${name}`, { method: "DELETE" })
+    static async deletePreference(id: string) {
+        const res = await fetch(`http://localhost:3000/preference/delete/${id}`, { method: "DELETE" })
 
         if (!res.ok) throw new Error("Failed to register preference");
 
         return res.json();
     }
+    static async updatePreference(id: string, data: { name: string }) {
+        const res = await fetch(`http://localhost:3000/preference/updatePreference/${id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+        });
+        if (!res.ok) {
+            throw new Error("Error al actualizar preferencia");
+        }
+        return await res.json();
+    }
     //Exercises
+    static async registerExercise(exercise: { img: string; name: string; description: string; preference: string }) {
+        const res = await fetch(`http://localhost:3000/exercise/register`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(exercise), 
+        });
 
+        if (!res.ok) throw new Error("Failed to register exercise");
+
+        return res.json();
+    }
+    static async getExercises() {
+        const res = await fetch(`http://localhost:3000/exercise/getExercises`, { method: "GET" })
+
+        if (!res.ok) throw new Error("Failed to register exercise");
+
+        return res.json();
+    }
+    static async updateExercise(id: string, data: { img: string; name: string; description: string; preference: string }) {
+        const res = await fetch(`http://localhost:3000/exercise/update/${id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+        });
+        if (!res.ok) {
+            throw new Error("Error al actualizar el ejercicio");
+        }
+        return await res.json();
+    }
+    static async deleteExercise(id: string) {
+        const res = await fetch(`http://localhost:3000/exercise/delete/${id}`, { method: "DELETE" })
+
+        if (!res.ok) throw new Error("Failed to register location");
+
+        return res.json();
+    }
     //Locations
+
+    static async getLocations() {
+        const res = await fetch(`http://localhost:3000/location/getLocations`, { method: "GET" })
+
+        if (!res.ok) throw new Error("Failed to register location");
+
+        return res.json();
+    }
+    static async registerLocation(name: string) {
+        const res = await fetch(`http://localhost:3000/location/registerLocation`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name }),
+        });
+
+        if (!res.ok) throw new Error("Failed to register location");
+
+        return res.json();
+    }
+    static async deleteLocation(id: string) {
+        const res = await fetch(`http://localhost:3000/location/deleteLocation/${id}`, { method: "DELETE" })
+
+        if (!res.ok) throw new Error("Failed to register location");
+
+        return res.json();
+    }
+
+    static async updateLocation(id: string, data: { name: string }) {
+        const res = await fetch(`http://localhost:3000/location/updateLocation/${id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+        });
+        if (!res.ok) {
+            throw new Error("Error al actualizar ubicación");
+        }
+        return await res.json();
+    }
 }

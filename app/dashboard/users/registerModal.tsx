@@ -5,6 +5,7 @@ import TypesCombobox from "@/components/dashboard/typesCombobox";
 import { useState } from "react";
 import API from "@/lib/api";
 import Swal from "sweetalert2";
+import GenderComboBox from "@/components/dashboard/genderComboBox";
 
 interface RegisterModalProps {
     isOpen: boolean;
@@ -17,6 +18,8 @@ export default function RegisterModal({ isOpen, onClose, onSuccess }: RegisterMo
     const [email, setEmail] = useState("");
     const [username, setUserName] = useState("");
     const [password, setPassword] = useState("");
+    const [gender, setGender] = useState("Masculino");
+    const [age, setAge] = useState("");
     const [user_type, setUserType] = useState("User");
     const [age, setAge] = useState("");
     const [gender, setGender] = useState("");
@@ -27,7 +30,8 @@ export default function RegisterModal({ isOpen, onClose, onSuccess }: RegisterMo
         e.preventDefault();
 
         try {
-            await API.registerUser({ name, username, password, email, user_type, age, gender });
+            await API.registerUser({ name, username, password, email, gender, age, user_type });
+
             Swal.fire({
                 icon: 'success',
                 title: 'Usuario registrado',
@@ -42,9 +46,9 @@ export default function RegisterModal({ isOpen, onClose, onSuccess }: RegisterMo
             setEmail("");
             setUserName("");
             setPassword("");
-            setUserType("User");
             setAge("");
-            setGender("");
+            setGender("Masculino");
+            setUserType("User")
 
         } catch (err) {
             Swal.fire({
@@ -93,21 +97,16 @@ export default function RegisterModal({ isOpen, onClose, onSuccess }: RegisterMo
                             onChange={e => setEmail(e.target.value)}
                             required
                         />
-                        <TypesCombobox selectedRole={user_type} onRoleChange={setUserType} />
                         <input
                             className="w-full p-2 border rounded"
                             placeholder="Edad"
+                            type="age"
                             value={age}
                             onChange={e => setAge(e.target.value)}
                             required
                         />
-                        <input
-                            className="w-full p-2 border rounded"
-                            placeholder="gender"
-                            value={gender}
-                            onChange={e => setGender(e.target.value)}
-                            required
-                        />
+                        <TypesCombobox selectedRole={user_type} onRoleChange={setUserType} />
+                        <GenderComboBox selectedRole={gender} onRoleChange={setGender} />
 
                         <div className="flex justify-end gap-2">
                             <button
