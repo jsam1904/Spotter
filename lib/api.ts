@@ -60,12 +60,23 @@ export default class API {
         return res.json();
     }
 
-    static async deletePreference(name: string) {
-        const res = await fetch(`http://localhost:3000/preference/delete/${name}`, { method: "DELETE" })
+    static async deletePreference(id: string) {
+        const res = await fetch(`http://localhost:3000/preference/delete/${id}`, { method: "DELETE" })
 
         if (!res.ok) throw new Error("Failed to register preference");
 
         return res.json();
+    }
+    static async updatePreference(id: string, data: { name: string }) {
+        const res = await fetch(`http://localhost:3000/preference/updatePreference/${id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+        });
+        if (!res.ok) {
+            throw new Error("Error al actualizar preferencia");
+        }
+        return await res.json();
     }
     //Exercises
 

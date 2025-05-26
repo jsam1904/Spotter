@@ -83,7 +83,6 @@ export default function UsersPage() {
     }
   }, []);
 
-  // Filtrar + paginar usuarios
   const filteredUsers = users.filter(user => {
     const lowerTerm = term.toLowerCase();
     return (
@@ -187,12 +186,6 @@ export default function UsersPage() {
                   >
                     <Pencil size={18} />
                   </button>
-                  <UpdateModal
-                    isOpen={isEditOpen}
-                    onClose={() => setIsEditOpen(false)}
-                    user={selectedUser}
-                    onSuccess={fetchUsers}
-                  />
                   <button
                     onClick={() => handleDelete(user.username)}
                     className="p-2 bg-red-500 text-white rounded hover:bg-red-600"

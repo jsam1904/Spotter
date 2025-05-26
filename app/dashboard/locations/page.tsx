@@ -19,11 +19,11 @@ export default function UsersPage() {
         setLocation(data);
     };
     const handleDelete = async (location: any) => {
-        console.log("location a eliminar:", location); // <-- agrega esto
+        console.log("location a eliminar:", location);
         const result = await Swal.fire({
             
             title: "¿Estás seguro?",
-            text: `Esto eliminará la ubicación "${location.name}".`, // muestra el nombre
+            text: `Esto eliminará la ubicación "${location.name}".`, 
             icon: "warning",
             showCancelButton: true,
             confirmButtonText: "Sí, eliminar",
@@ -32,7 +32,7 @@ export default function UsersPage() {
 
         if (result.isConfirmed) {
             try {
-                await API.deleteLocation(location.id); // usa el id para el backend
+                await API.deleteLocation(location.id); 
                 Swal.fire({
                     icon: "success",
                     title: "Ubicación eliminada",
