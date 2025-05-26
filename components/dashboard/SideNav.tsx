@@ -15,8 +15,11 @@ export default function SideNav() {
   const pathname = usePathname();
 
   return (
-    <aside className="w-64 bg-[#e6790c] text-black p-4 space-y-4">
-      <img src="public/logo1.png" alt="" /><h2 className="text-xl font-bold">Admin</h2>
+    <aside className="w-64 bg-[#5a5a5a] text-black p-4 space-y-4">
+      <div className="flex items-center gap-2 mb-2">
+        <img src="/logo1.png" alt="Logo" className="w-8 h-8" />
+        <span className="text-xl font-bold">Admin</span>
+      </div>
       <ul className="space-y-2">
         {navItems.map(item => (
           <li key={item.href}>

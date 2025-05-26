@@ -4,6 +4,14 @@ import React, { useEffect, useState } from "react";
 import API from "@/lib/api";
 import Swal from "sweetalert2";
 import RegisterModal from "./registerModal";
+import UpdateModal from "./updateModal";
+import { Pencil, Trash2 } from "lucide-react";
+
+interface Location {
+    id: string;
+    name: string;
+}
+
 const USERS_PER_PAGE = 8;
 
 export default function UsersPage() {
@@ -12,6 +20,7 @@ export default function UsersPage() {
     const [isDarkMode, setIsDarkMode] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
     const [term, setTerm] = useState('');
+    const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
     const [isEditOpen, setIsEditOpen] = useState(false);
 
     const fetchLocations = async () => {
@@ -21,9 +30,9 @@ export default function UsersPage() {
     const handleDelete = async (location: any) => {
         console.log("location a eliminar:", location);
         const result = await Swal.fire({
-            
+
             title: "¿Estás seguro?",
-            text: `Esto eliminará la ubicación "${location.name}".`, 
+            text: `Esto eliminará la ubicación "${location.name}".`,
             icon: "warning",
             showCancelButton: true,
             confirmButtonText: "Sí, eliminar",
@@ -32,7 +41,7 @@ export default function UsersPage() {
 
         if (result.isConfirmed) {
             try {
-                await API.deleteLocation(location.id); 
+                await API.deleteLocation(location.id);
                 Swal.fire({
                     icon: "success",
                     title: "Ubicación eliminada",
@@ -61,8 +70,12 @@ export default function UsersPage() {
         }
     }, []);
 
-    // Filtrar + paginar usuarios
-    const filteredPreferences = location.filter(location => {
+    const openEditModal = (location: Location) => {
+        setSelectedLocation(location);
+        setIsEditOpen(true);
+    };
+
+    const filteredLocation = location.filter(location => {
         const lowerTerm = term.toLowerCase();
         return (
             location.name?.toLowerCase().includes(lowerTerm)
@@ -70,10 +83,10 @@ export default function UsersPage() {
     });
 
 
-    const totalPages = Math.ceil(filteredPreferences.length / USERS_PER_PAGE);
+    const totalPages = Math.ceil(filteredLocation.length / USERS_PER_PAGE);
     const indexOfLastUser = currentPage * USERS_PER_PAGE;
     const indexOfFirstUser = indexOfLastUser - USERS_PER_PAGE;
-    const paginatedUsers = filteredPreferences.slice(indexOfFirstUser, indexOfLastUser);
+    const paginatedUsers = filteredLocation.slice(indexOfFirstUser, indexOfLastUser);
 
     function goToPage(page: number) {
         if (page < 1 || page > totalPages) return;
@@ -83,12 +96,12 @@ export default function UsersPage() {
     return (
         <div className="p-6 max-w-6xl mx-auto bg-background">
             <div className="flex justify-between items-center mb-6">
-                <h1 className="text-3xl font-bold">Preferencias</h1>
+                <h1 className="text-3xl font-bold">Ubicaciones</h1>
                 <button
                     onClick={() => setIsOpen(true)}
                     className="bg-[#e6790c] text-white px-4 py-2 rounded hover:bg-green-700"
                 >
-                    + Agregar Usuario
+                    + Agregar Ubicación
                 </button>
                 <RegisterModal
                     isOpen={isOpen}
@@ -99,7 +112,7 @@ export default function UsersPage() {
 
             <input
                 type="text"
-                placeholder="Buscar por nombre, username o email"
+                placeholder="Buscar por nombre"
                 value={term}
                 onChange={(e) => {
                     setTerm(e.target.value);
@@ -128,17 +141,18 @@ export default function UsersPage() {
                                 <td className="border border-gray-300 px-4 py-2">{location.name}</td>
                                 <td className="border border-gray-300 px-4 py-2 space-x-2">
                                     <button
-
-                                        className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600"
+                                        onClick={() => openEditModal(location)}
+                                        className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                                        title="Editar"
                                     >
-                                        Editar
+                                        <Pencil size={18} />
                                     </button>
-
                                     <button
                                         onClick={() => handleDelete(location)}
-                                        className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
+                                        className="p-2 bg-red-500 text-white rounded hover:bg-red-600"
+                                        title="Eliminar"
                                     >
-                                        Eliminar
+                                        <Trash2 size={18} />
                                     </button>
                                 </td>
                             </tr>
@@ -146,7 +160,12 @@ export default function UsersPage() {
                     )}
                 </tbody>
             </table>
-
+            <UpdateModal
+                isOpen={isEditOpen}
+                onClose={() => setIsEditOpen(false)}
+                location={selectedLocation}
+                onSuccess={fetchLocations}
+            />
             <div className="flex justify-center mt-4 space-x-2">
                 <button
                     onClick={() => goToPage(currentPage - 1)}
