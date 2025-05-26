@@ -5,19 +5,26 @@ import API from "@/lib/api";
 import RegisterModal from "./registerModal";
 import UpdateModal from "./updateModal";
 import Swal from "sweetalert2";
+import { Pencil, Trash2 } from "lucide-react";
+
 interface UserForm {
   name: string;
   username: string;
   email: string;
-  password?: string; 
+  password?: string;
   user_type?: "User" | "Admin";
   prof_pic?: string;
 }
 
 interface User {
+  id: string;
   username: string;
   name: string;
   email: string;
+  age: string;
+  gender: string;
+  user_type: string;
+  prof_pic?: string;
 }
 const USERS_PER_PAGE = 8;
 
@@ -87,7 +94,7 @@ export default function UsersPage() {
   });
 
 
-  const openEditModal = (user: { username: string; name: string; email: string }) => {
+  const openEditModal = (user: User) => {
     setSelectedUser(user);
     setIsEditOpen(true);
   };
@@ -137,6 +144,8 @@ export default function UsersPage() {
             <th className="border border-gray-300 px-4 py-2 text-left">Nombre</th>
             <th className="border border-gray-300 px-4 py-2 text-left">Username</th>
             <th className="border border-gray-300 px-4 py-2 text-left">Email</th>
+            <th className="border border-gray-300 px-4 py-2 text-left">Sexo</th>
+            <th className="border border-gray-300 px-4 py-2 text-left">Edad</th>
             <th className="border border-gray-300 px-4 py-2 text-left">User Type</th>
             <th className="border border-gray-300 px-4 py-2 text-left">Acciones</th>
           </tr>
@@ -167,13 +176,16 @@ export default function UsersPage() {
                 <td className="border border-gray-300 px-4 py-2">{user.name}</td>
                 <td className="border border-gray-300 px-4 py-2">{user.username}</td>
                 <td className="border border-gray-300 px-4 py-2">{user.email}</td>
+                <td className="border border-gray-300 px-4 py-2">{user.gender}</td>
+                <td className="border border-gray-300 px-4 py-2">{user.age}</td>
                 <td className="border border-gray-300 px-4 py-2">{user.user_type}</td>
-                <td className="border border-gray-300 px-4 py-2 space-x-2">
-                  <button onClick={() => openEditModal(user)}
-
-                    className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600"
+                <td className="border border-gray-300 px-4 py-2 space-x-2 flex">
+                  <button
+                    onClick={() => openEditModal(user)}
+                    className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                    title="Editar"
                   >
-                    Editar
+                    <Pencil size={18} />
                   </button>
                   <UpdateModal
                     isOpen={isEditOpen}
@@ -183,9 +195,10 @@ export default function UsersPage() {
                   />
                   <button
                     onClick={() => handleDelete(user.username)}
-                    className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
+                    className="p-2 bg-red-500 text-white rounded hover:bg-red-600"
+                    title="Eliminar"
                   >
-                    Eliminar
+                    <Trash2 size={18} />
                   </button>
                 </td>
               </tr>
@@ -193,7 +206,12 @@ export default function UsersPage() {
           )}
         </tbody>
       </table>
-
+      <UpdateModal
+        isOpen={isEditOpen}
+        onClose={() => setIsEditOpen(false)}
+        user={selectedUser}
+        onSuccess={fetchUsers}
+      />
       <div className="flex justify-center mt-4 space-x-2">
         <button
           onClick={() => goToPage(currentPage - 1)}

@@ -8,7 +8,7 @@ export default class API {
         return res.json();
     }
 
-    static async registerUser(user: { name: string; username: string; password: string; email: string; user_type: string; }) {
+    static async registerUser(user: { name: string; username: string; password: string; email: string; gender: string; age: string; user_type: string; }) {
         const res = await fetch("http://localhost:3000/users/register", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -28,7 +28,7 @@ export default class API {
         }
         return await res.json();
     }
-    static async updateUser(username: string, data: { name: string, email: string }) {
+    static async updateUser(username: string, data: { name: string; email: string; gender: string; age: string; user_type: string; }) {
         const res = await fetch(`http://localhost:3000/users/updateUser/${username}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
