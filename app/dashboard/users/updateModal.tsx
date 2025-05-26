@@ -39,30 +39,42 @@ export default function UpdateModal({ isOpen, onClose, user, onSuccess }: EditUs
   }, [user]);
 
   const handleUpdate = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!user) return;
+  e.preventDefault();
+  if (!user) return;
 
-    try {
-      await API.updateUser(user.username, { name, email, gender, age, user_type });
+  const safeName = name || user.name || "Sin nombre";
+  const safeEmail = email || user.email || "sin@email.com";
+  const safeAge = age || user.age || "0";
+  const safeGender = gender || user.gender || "No especificado";
+  const safeUserType = user_type || user.user_type || "User";
 
-      Swal.fire({
-        icon: "success",
-        title: "Usuario actualizado",
-        text: "El usuario fue actualizado correctamente.",
-        timer: 2000,
-        showConfirmButton: false,
-      }).then(() => {
-        onSuccess?.(); // recargar tabla
-        onClose();     // cerrar modal
-      });
-    } catch (err) {
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: "No se pudo actualizar el usuario.",
-      });
-    }
-  };
+  try {
+    await API.updateUser(user.username, {
+      name: safeName,
+      email: safeEmail,
+      gender: safeGender,
+      age: safeAge,
+      user_type: safeUserType,
+    });
+
+    Swal.fire({
+      icon: "success",
+      title: "Usuario actualizado",
+      text: "El usuario fue actualizado correctamente.",
+      timer: 2000,
+      showConfirmButton: false,
+    }).then(() => {
+      onSuccess?.();
+      onClose();
+    });
+  } catch (err) {
+    Swal.fire({
+      icon: "error",
+      title: "Error",
+      text: "No se pudo actualizar el usuario.",
+    });
+  }
+};
 
   return (
     <Dialog open={isOpen} onClose={onClose} className="relative z-50">
