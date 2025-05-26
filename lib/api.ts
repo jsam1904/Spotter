@@ -29,7 +29,11 @@ export default class API {
         return await res.json();
     }
     static async updateUser(username: string, data: { name: string, email: string }) {
-        const res = await fetch(`http://localhost:3000/users/updateUser/${username}`, { method: "PUT", })
+        const res = await fetch(`http://localhost:3000/users/updateUser/${username}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+        })
         if (!res.ok) {
             throw new Error("Error al actualizar usuario");
         }
@@ -66,4 +70,42 @@ export default class API {
     //Exercises
 
     //Locations
+
+    static async getLocations() {
+        const res = await fetch(`http://localhost:3000/location/getLocations`, { method: "GET" })
+
+        if (!res.ok) throw new Error("Failed to register location");
+
+        return res.json();
+    }
+    static async registerLocation(name: string) {
+        const res = await fetch(`http://localhost:3000/location/registerLocation`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name }),
+        });
+
+        if (!res.ok) throw new Error("Failed to register location");
+
+        return res.json();
+    }
+    static async deleteLocation(id: string) {
+        const res = await fetch(`http://localhost:3000/location/deleteLocation/${id}`, { method: "DELETE" })
+
+        if (!res.ok) throw new Error("Failed to register location");
+
+        return res.json();
+    }
+
+    static async updateLocation(id: string, data: { name: string }) {
+        const res = await fetch(`http://localhost:3000/location/updateLocation/${id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+        });
+        if (!res.ok) {
+            throw new Error("Error al actualizar ubicación");
+        }
+        return await res.json();
+    }
 }
