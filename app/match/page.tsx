@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useRef, useEffect } from "react";
@@ -10,129 +9,97 @@ import { MapPin, MessageSquare, Clock, X, Heart, Sun, Moon, Menu, Filter, ArrowL
 import { Slider } from "../../components/ui/slider";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select";
 import { motion, type PanInfo, useMotionValue, useTransform } from "framer-motion";
+import axios from "axios";
+import Swal from "sweetalert2";
 
-const matchesData = [
-  {
-    id: 1,
-    name: "Ana García",
-    age: 28,
-    gender: "Mujer",
-    location: "Madrid, España",
-    distance: 2.5,
-    goals: ["Tonificar", "Perder peso"],
-    schedule: ["Mañanas", "Fines de semana"],
-    experience: "Intermedio",
-    bio: "Entusiasta del fitness buscando compañeros para entrenar regularmente. Me encanta el entrenamiento de fuerza y el cardio HIIT.",
-    image: "https://craftcms-assets.playbookapp.io/challenge/lean-beef-patty-new-years-challenge/_375x400_crop_center-center_none/LeanBeefPatty-Challenge-Challenge-Header-1.png",
-    lastActive: "Hace 2 horas",
-  },
-  {
-    id: 2,
-    name: "Miguel Fernández",
-    age: 32,
-    gender: "Hombre",
-    location: "Madrid, España",
-    distance: 3.8,
-    goals: ["Ganar músculo", "Fuerza"],
-    schedule: ["Tardes", "Entre semana"],
-    experience: "Avanzado",
-    bio: "Powerlifter con 5 años de experiencia. Busco compañeros para sesiones de fuerza y técnica en los levantamientos básicos.",
-    image: "https://i.pinimg.com/736x/bd/ff/50/bdff5034a461015aa147b7dd964f964c.jpg",
-    lastActive: "Hace 30 minutos",
-  },
-  {
-    id: 3,
-    name: "Laura Martínez",
-    age: 25,
-    gender: "Mujer",
-    location: "Madrid, España",
-    distance: 1.2,
-    goals: ["Flexibilidad", "Resistencia"],
-    schedule: ["Mañanas", "Entre semana"],
-    experience: "Principiante",
-    bio: "Principiante en el mundo del fitness. Busco alguien que me pueda guiar y motivar en mis primeros pasos en el gimnasio.",
-    image: "https://www.hola.com/horizon/landscape/acb938f01aa7-spinning-salud-t.jpg",
-    lastActive: "Hace 1 día",
-  },
-  {
-    id: 4,
-    name: "Carlos Ruiz",
-    age: 30,
-    gender: "Hombre",
-    location: "Madrid, España",
-    distance: 4.5,
-    goals: ["Ganar músculo", "Definición"],
-    schedule: ["Noches", "Todos los días"],
-    experience: "Intermedio",
-    bio: "Apasionado del culturismo natural. Entreno 5 días a la semana y busco compañeros con objetivos similares para motivarnos mutuamente.",
-    image: "https://www.sdpnoticias.com/resizer/v2/4GFIF2ENH5GVFIF6HSDERCOPPY.jpg?smart=true&auth=47ff9d46e0bf94be3d8d01b340aa8e46f848227e9266435fa206e2d8469cf39c&width=1440&height=1546",
-    lastActive: "En línea ahora",
-  },
-  {
-    id: 5,
-    name: "Elena Sánchez",
-    age: 27,
-    gender: "Mujer",
-    location: "Madrid, España",
-    distance: 3.1,
-    goals: ["Tonificar", "Yoga"],
-    schedule: ["Tardes", "Fines de semana"],
-    experience: "Intermedio",
-    bio: "Instructora de yoga y entusiasta del fitness. Busco compañeros para entrenamientos variados y sesiones de yoga.",
-    image: "https://i.pinimg.com/originals/11/6f/17/116f17eab227934e5ebcacb1a024367a.jpg",
-    lastActive: "Hace 3 horas",
-  },
-];
-
-const conversationsData = [
-  {
-    id: 1,
-    user: {
-      id: 1,
-      name: "Ana García",
-      image: "https://via.placeholder.com/150?text=Ana",
-    },
-    lastMessage: "¿Te parece bien quedar mañana a las 18:00 en el gimnasio?",
-    timestamp: "10:30",
-    unread: true,
-  },
-  {
-    id: 2,
-    user: {
-      id: 2,
-      name: "Miguel Fernández",
-      image: "https://via.placeholder.com/150?text=Miguel",
-    },
-    lastMessage: "Gracias por los consejos sobre la técnica de sentadilla.",
-    timestamp: "Ayer",
-    unread: false,
-  },
-];
+// Define TypeScript interface for user data
+interface User {
+  email: string;
+  username: string;
+  name: string;
+  age: number;
+  gender: string;
+  bio: string;
+  prof_pic: string;
+  about_pics: string[];
+  preferences: string[];
+  gym: string;
+  score: number;
+}
 
 export default function FindMatches() {
   const [ageRange, setAgeRange] = useState([18, 80]);
   const [gender, setGender] = useState("Todos");
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [matches, setMatches] = useState(matchesData);
-  const [likedProfiles, setLikedProfiles] = useState<number[]>([]);
-  const [dislikedProfiles, setDislikedProfiles] = useState<number[]>([]);
+  const [matches, setMatches] = useState<User[]>([]);
+  const [likedProfiles, setLikedProfiles] = useState<string[]>([]);
+  const [dislikedProfiles, setDislikedProfiles] = useState<string[]>([]);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const [currentImageIndices, setCurrentImageIndices] = useState<number[]>([]); // Track current image index for each user
 
-  // Filtrar matches según edad y género
+  // Get email from JWT token
+  const getUserEmail = () => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      try {
+        const payload = JSON.parse(atob(token.split(".")[1]));
+        return payload.email;
+      } catch (e) {
+        console.error("Error decoding token:", e);
+        return null;
+      }
+    }
+    return null;
+  };
+
+  // Fetch recommended users
   useEffect(() => {
-    const filteredMatches = matchesData.filter(
-      (match) =>
-        match.age >= ageRange[0] &&
-        match.age <= ageRange[1] &&
-        (gender === "Todos" || match.gender === gender)
-    );
-    setMatches(filteredMatches);
-    setCurrentIndex(0); // Reiniciar al cambiar filtros
+    const fetchRecommendations = async () => {
+      const userEmail = getUserEmail();
+      if (!userEmail) {
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "No se pudo obtener el correo del usuario. Por favor, inicia sesión nuevamente.",
+          timer: 3000,
+          showConfirmButton: false,
+        });
+        return;
+      }
+      try {
+        const response = await axios.get(`http://localhost:3000/users/${userEmail}/recommend-users`);
+        // Access the recommendations array from the response
+        const users: User[] = response.data.recommendations.map((user: any) => ({
+          ...user,
+          age: parseInt(user.age, 10), // Convert age from string to number
+        }));
+        // Filter users based on age and gender
+        const filteredUsers = users.filter(
+          (user) =>
+            user.age >= ageRange[0] &&
+            user.age <= ageRange[1] &&
+            (gender === "Todos" || user.gender === gender)
+        );
+        setMatches(filteredUsers);
+        setCurrentImageIndices(new Array(filteredUsers.length).fill(0)); // Initialize image indices
+        setCurrentIndex(0);
+      } catch (error) {
+        console.error("Error fetching recommendations:", error);
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "No se pudieron cargar las recomendaciones. Intenta de nuevo más tarde.",
+          timer: 3000,
+          showConfirmButton: false,
+        });
+      }
+    };
+    fetchRecommendations();
   }, [ageRange, gender]);
 
-  // Manejo del tema oscuro
+  // Handle theme toggle
   useEffect(() => {
     const storedTheme = localStorage.getItem("theme");
     if (storedTheme === "dark") {
@@ -153,7 +120,17 @@ export default function FindMatches() {
     }
   };
 
-  // Animaciones de deslizamiento
+  // Handle image cycling
+  const handleImageClick = (userIndex: number) => {
+    setCurrentImageIndices((prev) => {
+      const newIndices = [...prev];
+      const userImages = matches[userIndex].about_pics.length > 0 ? matches[userIndex].about_pics : [matches[userIndex].prof_pic];
+      newIndices[userIndex] = (newIndices[userIndex] + 1) % userImages.length;
+      return newIndices;
+    });
+  };
+
+  // Animations for swiping
   const x = useMotionValue(0);
   const rotate = useTransform(x, [-200, 200], [-30, 30]);
   const likeOpacity = useTransform(x, [0, 100], [0, 1]);
@@ -176,14 +153,36 @@ export default function FindMatches() {
     }
   };
 
-  const likeProfile = () => {
-    if (currentIndex < matches.length) {
-      x.set(200);
-      setTimeout(() => {
-        setLikedProfiles([...likedProfiles, matches[currentIndex].id]);
-        setCurrentIndex(currentIndex + 1);
-        x.set(0);
-      }, 200);
+  const likeProfile = async () => {
+    if (currentIndex >= matches.length) return;
+    const userEmail = getUserEmail();
+    const likedUserEmail = matches[currentIndex].email;
+    try {
+      const response = await axios.post(
+      `http://localhost:3000/users/like/${userEmail}`,
+      { emailToLike: likedUserEmail }
+      );
+      if (response.status === 200) {
+        Swal.fire({
+          icon: "success",
+          title: "¡Nuevo Match!",
+          text: `Has hecho match con ${matches[currentIndex].name}!`,
+          timer: 2000,
+          showConfirmButton: false,
+        });
+      }
+      setLikedProfiles([...likedProfiles, likedUserEmail]);
+      setCurrentIndex(currentIndex + 1);
+      x.set(0);
+    } catch (error) {
+      console.error("Error liking profile:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "No se pudo dar like. Intenta de nuevo.",
+        timer: 2000,
+        showConfirmButton: false,
+      });
     }
   };
 
@@ -191,7 +190,7 @@ export default function FindMatches() {
     if (currentIndex < matches.length) {
       x.set(-200);
       setTimeout(() => {
-        setDislikedProfiles([...dislikedProfiles, matches[currentIndex].id]);
+        setDislikedProfiles([...dislikedProfiles, matches[currentIndex].email]);
         setCurrentIndex(currentIndex + 1);
         x.set(0);
       }, 200);
@@ -202,7 +201,7 @@ export default function FindMatches() {
     setCurrentIndex(0);
     setLikedProfiles([]);
     setDislikedProfiles([]);
-    setMatches(matchesData);
+    setCurrentImageIndices(new Array(matches.length).fill(0));
   };
 
   return (
@@ -235,7 +234,7 @@ export default function FindMatches() {
               Descubrir
             </Link>
             <Link href="match/chats" className="text-sm font-medium transition-colors hover:text-foreground/80">
-              Mensajes 
+              Mensajes
             </Link>
             <Link href="/Psettings" className="text-sm font-medium transition-colors hover:text-foreground/80">
               Perfil
@@ -396,7 +395,7 @@ export default function FindMatches() {
             ) : (
               <div className="relative h-[70vh] sm:h-[450px] md:h-[500px] w-full max-w-xs sm:max-w-sm md:max-w-md mx-auto">
                 <div className="relative w-full h-full">
-                  {/* Tarjeta anterior */}
+                  {/* Previous card */}
                   {currentIndex > 0 && (
                     <div
                       className="absolute top-0 left-0 h-full w-full origin-center hidden sm:block"
@@ -409,7 +408,12 @@ export default function FindMatches() {
                       <Card className="h-full overflow-hidden shadow-md">
                         <div className="relative h-full">
                           <img
-                            src={matches[currentIndex - 1].image || "/placeholder.svg"}
+                            src={
+                              matches[currentIndex - 1].about_pics.length > 0
+                                ? matches[currentIndex - 1].about_pics[currentImageIndices[currentIndex - 1]] ||
+                                  matches[currentIndex - 1].prof_pic
+                                : matches[currentIndex - 1].prof_pic || "/placeholder.svg"
+                            }
                             alt="Perfil anterior"
                             className="h-full w-full object-cover"
                           />
@@ -417,7 +421,7 @@ export default function FindMatches() {
                       </Card>
                     </div>
                   )}
-                  {/* Tarjeta siguiente */}
+                  {/* Next card */}
                   {currentIndex < matches.length - 1 && (
                     <div
                       className="absolute top-0 right-0 h-full w-full origin-center hidden sm:block"
@@ -430,7 +434,12 @@ export default function FindMatches() {
                       <Card className="h-full overflow-hidden shadow-md">
                         <div className="relative h-full">
                           <img
-                            src={matches[currentIndex + 1].image || "/placeholder.svg"}
+                            src={
+                              matches[currentIndex + 1].about_pics.length > 0
+                                ? matches[currentIndex + 1].about_pics[currentImageIndices[currentIndex + 1]] ||
+                                  matches[currentIndex + 1].prof_pic
+                                : matches[currentIndex + 1].prof_pic || "/placeholder.svg"
+                            }
                             alt="Perfil siguiente"
                             className="h-full w-full object-cover"
                           />
@@ -438,7 +447,7 @@ export default function FindMatches() {
                       </Card>
                     </div>
                   )}
-                  {/* Tarjeta actual */}
+                  {/* Current card */}
                   <motion.div
                     ref={cardRef}
                     className="absolute top-0 left-0 right-0 h-full w-full z-10"
@@ -451,9 +460,15 @@ export default function FindMatches() {
                     <Card className="h-full overflow-hidden shadow-lg flex flex-col">
                       <div className="relative h-full w-full">
                         <img
-                          src={matches[currentIndex].image || "/placeholder.svg"}
+                          src={
+                            matches[currentIndex].about_pics.length > 0
+                              ? matches[currentIndex].about_pics[currentImageIndices[currentIndex]] ||
+                                matches[currentIndex].prof_pic
+                              : matches[currentIndex].prof_pic || "/placeholder.svg"
+                          }
                           alt={matches[currentIndex].name}
-                          className="object-cover w-full h-full"
+                          className="object-cover w-full h-full cursor-pointer"
+                          onClick={() => handleImageClick(currentIndex)}
                         />
                         <motion.div
                           className="absolute top-4 sm:top-8 left-4 sm:left-8 rounded-full border-4 border-green-500 bg-white/80 p-1 sm:p-2"
@@ -477,28 +492,20 @@ export default function FindMatches() {
                               </h3>
                               <div className="flex items-center text-white/80 text-xs sm:text-sm">
                                 <MapPin className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
-                                <span>{matches[currentIndex].distance} km</span>
+                                <span>{matches[currentIndex].gym}</span>
                               </div>
                             </div>
                             <div className="flex items-center text-white/70 text-xs mb-1 sm:mb-2">
                               <Clock className="h-3 w-3 mr-1" />
-                              <span>{matches[currentIndex].lastActive}</span>
+                              <span>{matches[currentIndex].score.toFixed(2)} compatibilidad</span>
                             </div>
                             <div className="flex flex-wrap gap-1 mb-1 sm:mb-2">
-                              {matches[currentIndex].goals.map((goal, index) => (
+                              {matches[currentIndex].preferences.map((pref, index) => (
                                 <span
                                   key={index}
                                   className="bg-rose-600/80 text-white px-1.5 py-0.5 rounded-full text-xs"
                                 >
-                                  {goal}
-                                </span>
-                              ))}
-                              {matches[currentIndex].schedule.map((time, index) => (
-                                <span
-                                  key={index}
-                                  className="bg-gray-600/80 text-white px-1.5 py-0.5 rounded-full text-xs"
-                                >
-                                  {time}
+                                  {pref}
                                 </span>
                               ))}
                             </div>
@@ -507,31 +514,31 @@ export default function FindMatches() {
                             </p>
                           </div>
                           <div className="flex justify-center gap-[10vw] mt-2 sm:mt-4 md:mt-6">
-                                <Button
-                                  onClick={dislikeProfile}
-                                  size="icon"
-                                  className={`h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 rounded-full ${
-                                    isDarkMode ? "bg-gray-800 border-gray-600 hover:bg-gray-700" : "bg-white border-red-500 hover:bg-red-50"
-                                  } border-2 flex items-center justify-center`}
-                                >
-                                  <div className="relative flex items-center justify-center">
-                                    <X className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 text-red-500" />
-                                    <ArrowLeft className="absolute -left-4 h-4 w-4 text-red-500" />
-                                  </div>
-                                </Button>
-                                <Button
-                                  onClick={likeProfile}
-                                  size="icon"
-                                  className={`h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 rounded-full ${
-                                    isDarkMode ? "bg-gray-800 border-gray-600 hover:bg-gray-700" : "bg-white border-green-500 hover:bg-green-50"
-                                  } border-2 flex items-center justify-center`}
-                                >
-                                  <div className="relative flex items-center justify-center">
-                                    <Dumbbell className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 text-green-500" />
-                                    <ArrowRight className="absolute -right-4 h-4 w-4 text-green-500" />
-                                  </div>
-                                </Button>
+                            <Button
+                              onClick={dislikeProfile}
+                              size="icon"
+                              className={`h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 rounded-full ${
+                                isDarkMode ? "bg-gray-800 border-gray-600 hover:bg-gray-700" : "bg-white border-red-500 hover:bg-red-50"
+                              } border-2 flex items-center justify-center`}
+                            >
+                              <div className="relative flex items-center justify-center">
+                                <X className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 text-red-500" />
+                                <ArrowLeft className="absolute -left-4 h-4 w-4 text-red-500" />
                               </div>
+                            </Button>
+                            <Button
+                              onClick={likeProfile}
+                              size="icon"
+                              className={`h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 rounded-full ${
+                                isDarkMode ? "bg-gray-800 border-gray-600 hover:bg-gray-700" : "bg-white border-green-500 hover:bg-green-50"
+                              } border-2 flex items-center justify-center`}
+                            >
+                              <div className="relative flex items-center justify-center">
+                                <Dumbbell className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 text-green-500" />
+                                <ArrowRight className="absolute -right-4 h-4 w-4 text-green-500" />
+                              </div>
+                            </Button>
+                          </div>
                         </div>
                       </div>
                     </Card>
@@ -540,8 +547,6 @@ export default function FindMatches() {
               </div>
             )}
           </div>
-
-
         </div>
       </main>
     </div>
