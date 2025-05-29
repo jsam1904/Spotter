@@ -4,24 +4,34 @@ import React, { useEffect, useState } from "react";
 import API from "@/lib/api";
 import Swal from "sweetalert2";
 import RegisterModal from "./registerModal";
-const USERS_PER_PAGE = 8;
+import UpdateModal from "./updateModal";
+import { Pencil, Trash2 } from "lucide-react";
 
-export default function UsersPage() {
+interface Preference {
+    id: string;
+    name: string;
+}
+
+const PREFERENCES_PER_PAGE = 8;
+
+export default function PreferencesPage() {
     const [preferences, setPreference] = useState<any[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [isDarkMode, setIsDarkMode] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
     const [term, setTerm] = useState('');
+    const [selectedPreference, setSelectedPreference] = useState<Preference | null>(null);
     const [isEditOpen, setIsEditOpen] = useState(false);
 
     const fetchPreferences = async () => {
         const data = await API.getPreferences();
         setPreference(data);
     };
-    const handleDelete = async (name: string) => {
+    const handleDelete = async (preference: any) => {
+        console.log(preference);
         const result = await Swal.fire({
             title: "¿Estás seguro?",
-            text: `Esto eliminará la preferencia "${name}".`,
+            text: `Esto eliminará la preferencia "${preference.name}".`,
             icon: "warning",
             showCancelButton: true,
             confirmButtonText: "Sí, eliminar",
@@ -30,7 +40,7 @@ export default function UsersPage() {
 
         if (result.isConfirmed) {
             try {
-                await API.deletePreference(name);
+                await API.deletePreference(preference.id);
                 Swal.fire({
                     icon: "success",
                     title: "Preferencia eliminada",
@@ -58,8 +68,11 @@ export default function UsersPage() {
             document.documentElement.classList.add("dark");
         }
     }, []);
+    const openEditModal = (preference: Preference) => {
+        setSelectedPreference(preference);
+        setIsEditOpen(true);
+    };
 
-    // Filtrar + paginar usuarios
     const filteredPreferences = preferences.filter(preference => {
         const lowerTerm = term.toLowerCase();
         return (
@@ -68,10 +81,10 @@ export default function UsersPage() {
     });
 
 
-    const totalPages = Math.ceil(filteredPreferences.length / USERS_PER_PAGE);
-    const indexOfLastUser = currentPage * USERS_PER_PAGE;
-    const indexOfFirstUser = indexOfLastUser - USERS_PER_PAGE;
-    const paginatedUsers = filteredPreferences.slice(indexOfFirstUser, indexOfLastUser);
+    const totalPages = Math.ceil(filteredPreferences.length / PREFERENCES_PER_PAGE);
+    const indexOfLastPreference = currentPage * PREFERENCES_PER_PAGE;
+    const indexOfFirstPreference = indexOfLastPreference - PREFERENCES_PER_PAGE;
+    const paginatedUsers = filteredPreferences.slice(indexOfFirstPreference, indexOfLastPreference);
 
     function goToPage(page: number) {
         if (page < 1 || page > totalPages) return;
@@ -86,7 +99,7 @@ export default function UsersPage() {
                     onClick={() => setIsOpen(true)}
                     className="bg-[#e6790c] text-white px-4 py-2 rounded hover:bg-green-700"
                 >
-                    + Agregar Usuario
+                    + Agregar Preferencia
                 </button>
                 <RegisterModal
                     isOpen={isOpen}
@@ -97,7 +110,7 @@ export default function UsersPage() {
 
             <input
                 type="text"
-                placeholder="Buscar por nombre, username o email"
+                placeholder="Buscar por nombre"
                 value={term}
                 onChange={(e) => {
                     setTerm(e.target.value);
@@ -126,17 +139,18 @@ export default function UsersPage() {
                                 <td className="border border-gray-300 px-4 py-2">{preference.name}</td>
                                 <td className="border border-gray-300 px-4 py-2 space-x-2">
                                     <button
-
-                                        className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600"
+                                        onClick={() => openEditModal(preference)}
+                                        className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                                        title="Editar"
                                     >
-                                        Editar
+                                        <Pencil size={18} />
                                     </button>
-
                                     <button
-                                        onClick={() => handleDelete(preference.name)}
-                                        className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
+                                        onClick={() => handleDelete(preference)}
+                                        className="p-2 bg-red-500 text-white rounded hover:bg-red-600"
+                                        title="Eliminar"
                                     >
-                                        Eliminar
+                                        <Trash2 size={18} />
                                     </button>
                                 </td>
                             </tr>
@@ -144,7 +158,12 @@ export default function UsersPage() {
                     )}
                 </tbody>
             </table>
-
+            <UpdateModal
+                isOpen={isEditOpen}
+                onClose={() => setIsEditOpen(false)}
+                preference={selectedPreference}
+                onSuccess={fetchPreferences}
+            />
             <div className="flex justify-center mt-4 space-x-2">
                 <button
                     onClick={() => goToPage(currentPage - 1)}

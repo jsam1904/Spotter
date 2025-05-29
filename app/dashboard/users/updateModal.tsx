@@ -4,6 +4,8 @@ import { Dialog } from "@headlessui/react";
 import { useState, useEffect } from "react";
 import API from "@/lib/api";
 import Swal from "sweetalert2";
+import TypesCombobox from "@/components/dashboard/typesCombobox";
+import GenderComboBox from "@/components/dashboard/genderComboBox";
 
 interface EditUserModalProps {
   isOpen: boolean;
@@ -12,6 +14,9 @@ interface EditUserModalProps {
     username: string;
     name: string;
     email: string;
+    age: string;
+    gender: string;
+    user_type: string
   } | null;
   onSuccess?: () => void;
 }
@@ -19,39 +24,57 @@ interface EditUserModalProps {
 export default function UpdateModal({ isOpen, onClose, user, onSuccess }: EditUserModalProps) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [gender, setGender] = useState("Masculino");
+  const [age, setAge] = useState("");
+  const [user_type, setUserType] = useState("User");
 
   useEffect(() => {
     if (user) {
       setName(user.name);
       setEmail(user.email);
+      setAge(user.age);
+      setGender(user.gender);
+      setUserType(user.user_type);
     }
   }, [user]);
 
   const handleUpdate = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!user) return;
+  e.preventDefault();
+  if (!user) return;
 
-    try {
-      await API.updateUser(user.username, { name, email });
+  const safeName = name || user.name || "Sin nombre";
+  const safeEmail = email || user.email || "sin@email.com";
+  const safeAge = age || user.age || "0";
+  const safeGender = gender || user.gender || "No especificado";
+  const safeUserType = user_type || user.user_type || "User";
 
-      Swal.fire({
-        icon: "success",
-        title: "Usuario actualizado",
-        text: "El usuario fue actualizado correctamente.",
-        timer: 2000,
-        showConfirmButton: false,
-      }).then(() => {
-        onSuccess?.(); // recargar tabla
-        onClose();     // cerrar modal
-      });
-    } catch (err) {
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: "No se pudo actualizar el usuario.",
-      });
-    }
-  };
+  try {
+    await API.updateUser(user.username, {
+      name: safeName,
+      email: safeEmail,
+      gender: safeGender,
+      age: safeAge,
+      user_type: safeUserType,
+    });
+
+    Swal.fire({
+      icon: "success",
+      title: "Usuario actualizado",
+      text: "El usuario fue actualizado correctamente.",
+      timer: 2000,
+      showConfirmButton: false,
+    }).then(() => {
+      onSuccess?.();
+      onClose();
+    });
+  } catch (err) {
+    Swal.fire({
+      icon: "error",
+      title: "Error",
+      text: "No se pudo actualizar el usuario.",
+    });
+  }
+};
 
   return (
     <Dialog open={isOpen} onClose={onClose} className="relative z-50">
@@ -65,7 +88,7 @@ export default function UpdateModal({ isOpen, onClose, user, onSuccess }: EditUs
               className="w-full p-2 border rounded"
               placeholder="Nombre"
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={e => setName(e.target.value)}
               required
             />
             <input
@@ -73,9 +96,18 @@ export default function UpdateModal({ isOpen, onClose, user, onSuccess }: EditUs
               placeholder="Email"
               type="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={e => setEmail(e.target.value)}
               required
             />
+            <input
+              className="w-full p-2 border rounded"
+              placeholder="Edad"
+              value={age}
+              onChange={e => setAge(e.target.value)}
+              required
+            />
+            <TypesCombobox selectedRole={user_type} onRoleChange={setUserType} />
+            <GenderComboBox selectedRole={gender} onRoleChange={setGender} />
 
             <div className="flex justify-end gap-2">
               <button
