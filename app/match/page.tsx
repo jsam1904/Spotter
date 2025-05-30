@@ -162,15 +162,44 @@ export default function FindMatches() {
       const response = await axios.post(
       `http://localhost:3000/users/like/${userEmail}`,
       { emailToLike: likedUserEmail }
-      );
+            );
       if (response.status === 200) {
         Swal.fire({
-          icon: "success",
-          title: "¡Nuevo Match!",
+          title: "¡Encontraste un nuevo spotter!",
+          html: `
+            <div id="custom-spotter-animation" style="display: flex; align-items: center; justify-content: center; height: 160px;">
+              <img id="logo-left" src="/logo1left.png" style="width: 120px; margin-right: -18px; transform: translateX(-30px); transition: transform 1.2s cubic-bezier(.68,-0.55,.27,1.55);" />
+              <img id="logo-right" src="/logo1right.png" style="width: 93px; margin-left: -18px; transform: translateX(30px); transition: transform 1.2s cubic-bezier(.68,-0.55,.27,1.55);" />
+            </div>
+          `,
+          didOpen: () => {
+            setTimeout(() => {
+              // Juntar los logos
+              const left = document.getElementById("logo-left");
+              const right = document.getElementById("logo-right");
+              if (left && right) {
+                left.style.transform = "translateX(0)";
+                right.style.transform = "translateX(0)";
+              }
+              setTimeout(() => {
+                const container = document.getElementById("custom-spotter-animation");
+                if (container) {
+                  container.style.transition = "transform 1.2s cubic-bezier(.68,-0.55,.27,1.55)";
+                  container.style.transform = "scale(1.6)";
+                  setTimeout(() => {
+                    container.style.transform = "scale(1)";
+                  }, 400);
+                }
+              }, 700);
+            }, 100);
+          },
           text: `Has hecho match con ${matches[currentIndex].name}!`,
-          timer: 2000,
-          showConfirmButton: false,
+          showConfirmButton: true,
+          customClass: {
+            popup: 'swal2-spotter-popup'
+          }
         });
+
       }
       setLikedProfiles([...likedProfiles, likedUserEmail]);
       setCurrentIndex(currentIndex + 1);
