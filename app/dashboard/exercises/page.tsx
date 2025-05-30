@@ -170,14 +170,14 @@ export default function UsersPage() {
                                         className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
                                         title="Editar"
                                     >
-                                        <Pencil size={18} />
+                                        <Pencil size={15} />
                                     </button>
                                     <button
                                         onClick={() => handleDelete(exercise)}
                                         className="p-2 bg-red-500 text-white rounded hover:bg-red-600"
                                         title="Eliminar"
                                     >
-                                        <Trash2 size={18} />
+                                        <Trash2 size={15} />
                                     </button>
                                 </td>
                             </tr>
