@@ -12,6 +12,7 @@ import { Textarea } from "../../components/ui/textarea"
 import { Switch } from "../../components/ui/switch"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select"
 import { Camera, User, Bell, Shield, LogOut, Sun, Moon, Menu } from "lucide-react"
+import { DarkModeToggle } from "../../components/ui/DarkModeToggle"
 
 export default function ProfileSettings() {
   const [profileImage, setProfileImage] = useState("https://via.placeholder.com/150?text=User")
@@ -69,20 +70,7 @@ export default function ProfileSettings() {
             </Link>
           </nav>
           <div className="hidden md:flex items-center gap-4">
-            <div
-              className={`relative flex items-center justify-between gap-2 p-1 px-0 rounded-full ${
-                isDarkMode ? "bg-gray-700" : "bg-gray-300"
-              } cursor-pointer w-14`}
-              onClick={toggleDarkMode}
-            >
-              <Sun className={`h-4 w-4 ml-2 ${!isDarkMode ? "text-[#e6790c]" : "text-gray-400"}`} />
-              <Moon className={`h-4 w-4 mr-2 ${isDarkMode ? "text-blue-500" : "text-gray-400"}`} />
-              <div
-                className={`absolute w-8 h-6 rounded-full transition-transform ${
-                  isDarkMode ? "translate-x-6 bg-gray-900/80" : "translate-x-0 bg-white/60"
-                } z-10`}
-              ></div>
-            </div>
+            <DarkModeToggle isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />
           </div>
           <button className="md:hidden flex items-center" onClick={() => setMenuOpen(!menuOpen)}>
             <Menu className="h-6 w-6" />
@@ -99,20 +87,7 @@ export default function ProfileSettings() {
             <Link href="/match" className="text-sm font-medium transition-colors hover:text-foreground/80">
               Match
             </Link>
-            <div
-              className={`relative flex items-center justify-between gap-2 p-1 px-0 rounded-full ${
-                isDarkMode ? "bg-gray-700" : "bg-gray-300"
-              } cursor-pointer w-14`}
-              onClick={toggleDarkMode}
-            >
-              <Sun className={`h-4 w-4 ml-2 ${!isDarkMode ? "text-[#e6790c]" : "text-gray-400"}`} />
-              <Moon className={`h-4 w-4 mr-2 ${isDarkMode ? "text-blue-500" : "text-gray-400"}`} />
-              <div
-                className={`absolute w-8 h-6 rounded-full transition-transform ${
-                  isDarkMode ? "translate-x-6 bg-gray-900/80" : "translate-x-0 bg-white/60"
-                } z-10`}
-              ></div>
-            </div>
+            <DarkModeToggle isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />
           </div>
         )}
       </header>
