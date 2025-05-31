@@ -41,7 +41,6 @@ export default function ChatPage() {
       const decoded = jwtDecode<DecodedToken>(token);
       setSenderEmail(decoded.email);
 
-      // Fetch matches for the user
       axios
         .get(`http://localhost:3000/users/${decoded.email}/getMatches`)
         .then(async (res) => {
@@ -49,7 +48,6 @@ export default function ChatPage() {
           setMatches(matchesData);
 
           if (matchesData.length > 0) {
-            // Fetch chat history for each match to find the most recent message
             let mostRecentMatch = null;
             let latestTimestamp = 0;
 
@@ -133,7 +131,6 @@ export default function ChatPage() {
 
   return (
     <div className="flex min-h-screen">
-      {/* Sidebar with Matches */}
       <div
         className={`w-80 bg-gray-100 p-4 border-r border-gray-200 ${
           selectedMatch ? 'hidden md:block' : 'block'
@@ -159,7 +156,9 @@ export default function ChatPage() {
                     />
                   ) : (
                     <div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center text-gray-600">
-                      {match.username[0].toUpperCase()}
+                      {match.username && match.username.length > 0
+                        ? match.username[0].toUpperCase()
+                        : '?'}
                     </div>
                   )}
                   <div>
@@ -178,25 +177,29 @@ export default function ChatPage() {
       {/* Chat Section */}
       <div className="flex-1 p-4 max-w-4xl mx-auto space-y-4">
         <div className="border h-[calc(100vh-200px)] overflow-y-auto p-3 bg-gray-50 rounded">
-          {messages.map((msg, index) => (
-            <div
-              key={index}
-              className={`mb-2 flex ${
-                msg.senderEmail === senderEmail ? 'justify-end' : 'justify-start'
-              }`}
-            >
+          {messages.length === 0 ? (
+            <div className="text-center text-gray-400 mt-10">Aún no hay mensajes entre ustedes, envia uno e inicia una conversación</div>
+          ) : (
+            messages.map((msg, index) => (
               <div
-                className={`px-4 py-2 rounded-lg max-w-xs ${
-                  msg.senderEmail === senderEmail ? 'bg-[#e6790c] text-white' : 'bg-gray-300'
+                key={index}
+                className={`mb-2 flex ${
+                  msg.senderEmail === senderEmail ? 'justify-end' : 'justify-start'
                 }`}
               >
-                <p>{msg.content}</p>
-                <p className="text-xs text-right mt-1 opacity-70">
-                  {new Date(msg.timestamp).toLocaleTimeString()}
-                </p>
+                <div
+                  className={`px-4 py-2 rounded-lg max-w-xs ${
+                    msg.senderEmail === senderEmail ? 'bg-[#e6790c] text-white' : 'bg-gray-300'
+                  }`}
+                >
+                  <p>{msg.content}</p>
+                  <p className="text-xs text-right mt-1 opacity-70">
+                    {new Date(msg.timestamp).toLocaleTimeString()}
+                  </p>
+                </div>
               </div>
-            </div>
-          ))}
+            ))
+          )}
           <div ref={messagesEndRef} />
         </div>
 
