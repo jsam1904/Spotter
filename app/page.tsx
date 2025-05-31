@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ArrowRight, Dumbbell, Users, Search, Menu, Sun, Moon, Calendar } from "lucide-react"
 import { DarkModeToggle } from "@/components/ui/DarkModeToggle"
+import { Navbar } from "@/components/ui/Navbar" // <-- Importa tu Navbar
 
 export default function LandingPage() {
   const [isDarkMode, setIsDarkMode] = useState(false)
@@ -33,73 +34,45 @@ export default function LandingPage() {
     }
   }
 
+  // Links para la navbar
+  const links = [
+    { href: "#features", label: "Características" },
+    { href: "#how-it-works", label: "Cómo funciona" },
+    { href: "#vision", label: "Visión y Misión" },
+  ]
+
+  // Botones de acciones para la navbar
+  const actions = (
+    <>
+      <Link href="/login">
+        <Button
+          variant="outline"
+          className={`hidden md:inline-flex ${isDarkMode ? "bg-gray-800 text-white hover:bg-gray-700" : "bg-[#e6790c] text-white hover:bg-rose-700"}`}
+        >
+          Iniciar sesión
+        </Button>
+      </Link>
+      <Link href="/signup">
+        <Button
+          variant="outline"
+          className={`hidden md:inline-flex ${
+            isDarkMode ? "bg-white text-black hover:bg-gray-800" : "bg-black text-white hover:bg-rose-200"
+          }`}
+        >
+          Registrarse
+        </Button>
+      </Link>
+    </>
+  )
+
   return (
     <div className={`flex min-h-screen flex-col transition duration-700 ease-in-out ${isDarkMode ? "bg-[#222b4b] text-white" : "bg-white text-black"}`}>
-      <header    className={`sticky top-0 z-50 w-full border-b ${
-          isDarkMode ? "bg-[#01152b]" : "bg-white"
-        } backdrop-blur supports-[backdrop-filter]:bg-opacity-95`}>
-        <div className="container flex h-16 items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Image
-              src={isDarkMode ? "/logo2.png" : "/logo1.png"}
-              alt="Spotter Logo"
-              width={42}
-              height={42}
-              className="h-16 w-16"
-            />
-            <span className="text-xl font-bold">Spotter</span>
-          </div>
-          <nav className="hidden md:flex gap-6">
-            <Link href="#features" className="text-sm font-medium transition-colors hover:text-foreground/80">
-              Características
-            </Link>
-            <Link href="#how-it-works" className="text-sm font-medium transition-colors hover:text-foreground/80">
-              Cómo funciona
-            </Link>
-          </nav>
-          <div className="hidden md:flex items-center gap-4">
-            <DarkModeToggle isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />
-            <a href="/login">
-            <Button
-                variant="outline"
-                className={`hidden md:inline-flex ${isDarkMode ? "bg-gray-800 text-white hover:bg-gray-700" : "bg-[#e6790c] text-white hover:bg-rose-700"}`}
-              >
-                Iniciar sesión
-              </Button>
-            </a>
-            <a href="/signup">
-              <Button
-                  variant="outline"
-                  className={`hidden md:inline-flex ${
-                    isDarkMode ? "bg-white text-black hover:bg-gray-800" : "bg-black text-white hover:bg-rose-200"
-                  }`}
-                >
-                  Registrarse
-                </Button>
-            </a>
-          </div>
-          <button
-            className="md:hidden flex items-center"
-            onClick={() => setMenuOpen(!menuOpen)}
-          >
-            <Menu className="h-6 w-6" />
-          </button>
-        </div>
-        {menuOpen && (
-          <div className="md:hidden flex flex-col items-center gap-4 p-4 bg-background">
-            <Link href="#features" className="text-sm font-medium transition-colors hover:text-foreground/80">
-              Características
-            </Link>
-            <Link href="#how-it-works" className="text-sm font-medium transition-colors hover:text-foreground/80">
-              Cómo funciona
-            </Link>
-
-            <DarkModeToggle isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />
-
-
-          </div>
-        )}
-      </header>
+      <Navbar
+        isDarkMode={isDarkMode}
+        toggleDarkMode={toggleDarkMode}
+        links={links}
+        actions={actions}
+      />
       <main className="flex-1">
         <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48">
           <div className="container px-4 md:px-6">

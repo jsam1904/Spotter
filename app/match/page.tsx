@@ -12,6 +12,7 @@ import { motion, type PanInfo, useMotionValue, useTransform } from "framer-motio
 import axios from "axios";
 import Swal from "sweetalert2";
 import { DarkModeToggle } from "../../components/ui/DarkModeToggle";
+import { Navbar } from "../../components/ui/Navbar"; // <-- Importa tu Navbar
 
 // Define TypeScript interface for user data
 interface User {
@@ -234,116 +235,39 @@ export default function FindMatches() {
     setCurrentImageIndices(new Array(matches.length).fill(0));
   };
 
+  // Links para la navbar
+  const links = [
+    { href: "/UserPage", label: "Inicio" },
+    { href: "/UserPage?tab=discover", label: "Descubrir" },
+    { href: "/match/chats", label: "Mensajes" },
+    { href: "/Psettings", label: "Perfil" },
+  ];
+
+  // Botón de filtros como acción personalizada
+  const actions = (
+    <Button
+      variant="outline"
+      size="sm"
+      onClick={() => setFiltersOpen(!filtersOpen)}
+      className={isDarkMode ? "bg-gray-700 text-white" : "bg-gray-200 text-black"}
+    >
+      <Filter className="h-4 w-4 mr-2" />
+      Filtros
+    </Button>
+  );
+
   return (
     <div
       className={`flex min-h-screen flex-col transition duration-700 ease-in-out ${
         isDarkMode ? "bg-[#222b4b] text-white" : "bg-white text-black"
       }`}
     >
-      <header
-        className={`sticky top-0 z-50 w-full border-b ${
-          isDarkMode ? "bg-[#01152b]" : "bg-[#faf6eb]"
-        } backdrop-blur supports-[backdrop-filter]:bg-opacity-95`}
-      >
-        <div className="container flex h-16 items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Image
-              src={isDarkMode ? "/logo2.png" : "/logo1.png"}
-              alt="Spotter Logo"
-              width={42}
-              height={42}
-              className="h-16 w-16"
-            />
-            <span className="text-xl font-bold">Spotter</span>
-          </div>
-          <nav className="hidden md:flex gap-6 items-center">
-            <Link href="/UserPage" className="text-sm font-medium transition-colors hover:text-foreground/80">
-              Inicio
-            </Link>
-            <Link href="/UserPage?tab=discover" className="text-sm font-medium transition-colors hover:text-foreground/80">
-              Descubrir
-            </Link>
-            <Link href="match/chats" className="text-sm font-medium transition-colors hover:text-foreground/80">
-              Mensajes
-            </Link>
-            <Link href="/Psettings" className="text-sm font-medium transition-colors hover:text-foreground/80">
-              Perfil
-            </Link>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setFiltersOpen(!filtersOpen)}
-              className={isDarkMode ? "bg-gray-700 text-white" : "bg-gray-200 text-black"}
-            >
-              <Filter className="h-4 w-4 mr-2" />
-              Filtros
-            </Button>
-          </nav>
-          <div className="hidden md:flex items-center gap-4">
-            <DarkModeToggle isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />
-          </div>
-          <button className="md:hidden flex items-center" onClick={() => setMenuOpen(!menuOpen)}>
-            <Menu className="h-6 w-6" />
-          </button>
-        </div>
-        {menuOpen && (
-          <div className="md:hidden flex flex-col items-center gap-4 p-4 bg-background">
-            <Link href="/UserPage" className="text-sm font-medium transition-colors hover:text-foreground/80">
-              Inicio
-            </Link>
-            <Link href="/UserPage?tab=discover" className="text-sm font-medium transition-colors hover:text-foreground/80">
-              Descubrir
-            </Link>
-            <Link href="match/chats" className="text-sm font-medium transition-colors hover:text-foreground/80">
-              Mensajes
-            </Link>
-            <Link href="/Psettings" className="text-sm font-medium transition-colors hover:text-foreground/80">
-              Perfil
-            </Link>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setFiltersOpen(!filtersOpen)}
-              className={isDarkMode ? "bg-gray-700 text-white" : "bg-gray-200 text-black"}
-            >
-              <Filter className="h-4 w-4 mr-2" />
-              Filtros
-            </Button>
-            <DarkModeToggle isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />
-          </div>
-        )}
-        {filtersOpen && (
-          <div className="md:hidden flex flex-col items-center gap-4 p-4 bg-background border-t">
-            <div className="w-full max-w-xs space-y-4">
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Rango de edad: {ageRange[0]} - {ageRange[1]} años</label>
-                <Slider
-                  defaultValue={[18, 80]}
-                  min={18}
-                  max={80}
-                  step={1}
-                  value={ageRange}
-                  onValueChange={setAgeRange}
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Género</label>
-                <Select value={gender} onValueChange={setGender}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecciona género" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Todos">Todos</SelectItem>
-                    <SelectItem value="Hombre">Hombre</SelectItem>
-                    <SelectItem value="Mujer">Mujer</SelectItem>
-                    <SelectItem value="Otro">Otro</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          </div>
-        )}
-      </header>
+      <Navbar
+        isDarkMode={isDarkMode}
+        toggleDarkMode={toggleDarkMode}
+        links={links}
+        actions={actions}
+      />
       <main className="flex-1 container py-4 md:py-8 px-4 md:px-6">
         <div className="space-y-4 md:space-y-6 max-w-4xl mx-auto">
           {filtersOpen && (

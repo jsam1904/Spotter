@@ -13,6 +13,7 @@ import { Switch } from "../../components/ui/switch"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select"
 import { Camera, User, Bell, Shield, LogOut, Sun, Moon, Menu } from "lucide-react"
 import { DarkModeToggle } from "../../components/ui/DarkModeToggle"
+import { Navbar } from "../../components/ui/Navbar" // <-- Importa tu Navbar
 
 export default function ProfileSettings() {
   const [profileImage, setProfileImage] = useState("https://via.placeholder.com/150?text=User")
@@ -39,59 +40,23 @@ export default function ProfileSettings() {
     }
   }
 
+  // Links para la navbar
+  const links = [
+    { href: "/UserPage", label: "Inicio" },
+    { href: "/match", label: "Match" },
+    { href: "/recomendation", label: "Recomendaciones" },
+    { href: "/Psettings", label: "Perfil" },
+  ]
+
   return (
     <div
       className={`flex min-h-screen flex-col transition duration-700 ease-in-out ${isDarkMode ? "bg-[#222b4b] text-white" : "bg-white text-black"}`}
     >
-      {/* NAVBAR */}
-      <header
-        className={`sticky top-0 z-50 w-full border-b ${isDarkMode ? "bg-[#01152b]" : "bg-[#faf6eb]"} backdrop-blur supports-[backdrop-filter]:bg-opacity-95`}
-      >
-        <div className="container flex h-16 items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Image
-              src={isDarkMode ? "/logo2.png" : "/logo1.png"}
-              alt="Spotter Logo"
-              width={42}
-              height={42}
-              className="h-16 w-16"
-            />
-            <span className="text-xl font-bold">Spotter</span>
-          </div>
-          <nav className="hidden md:flex gap-6">
-            <Link href="/UserPage" className="text-sm font-medium transition-colors hover:text-foreground/80">
-              Inicio
-            </Link>
-            <Link href="/match" className="text-sm font-medium transition-colors hover:text-foreground/80">
-              Match
-            </Link>
-            <Link href="/recomendation" className="text-sm font-medium transition-colors hover:text-foreground/80">
-              Recomendaciones
-            </Link>
-          </nav>
-          <div className="hidden md:flex items-center gap-4">
-            <DarkModeToggle isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />
-          </div>
-          <button className="md:hidden flex items-center" onClick={() => setMenuOpen(!menuOpen)}>
-            <Menu className="h-6 w-6" />
-          </button>
-        </div>
-        {menuOpen && (
-          <div className="md:hidden flex flex-col items-center gap-4 p-4 bg-background">
-            <Link href="/UserPage" className="text-sm font-medium transition-colors hover:text-foreground/80">
-              Inicio
-            </Link>
-            <Link href="/recomendation" className="text-sm font-medium transition-colors hover:text-foreground/80">
-              Recomendaciones
-            </Link>
-            <Link href="/match" className="text-sm font-medium transition-colors hover:text-foreground/80">
-              Match
-            </Link>
-            <DarkModeToggle isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />
-          </div>
-        )}
-      </header>
-
+      <Navbar
+        isDarkMode={isDarkMode}
+        toggleDarkMode={toggleDarkMode}
+        links={links}
+      />
       <main className="flex-1 container py-6 px-4 md:px-6">
         <div className="space-y-6 max-w-5xl mx-auto">
           <h2 className="text-2xl font-bold">Configuración de Perfil</h2>
