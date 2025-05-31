@@ -174,7 +174,6 @@ export default function ChatPage() {
         )}
       </div>
 
-      {/* Chat Section */}
       <div className="flex-1 p-4 max-w-4xl mx-auto space-y-4">
         <div className="border h-[calc(100vh-200px)] overflow-y-auto p-3 bg-gray-50 rounded">
           {messages.length === 0 ? (
