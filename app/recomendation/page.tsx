@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Heart, Filter, ChevronLeft, ChevronRight, Sun, Moon, Menu, Dumbbell } from "lucide-react"
 import { DarkModeToggle } from "@/components/ui/DarkModeToggle"
+import { Navbar } from "@/components/ui/Navbar" // <-- Importa tu Navbar
 
 // Datos de ejemplo para ejercicios
 const exercisesData = [
@@ -111,6 +112,13 @@ export default function ExerciseRecommendations() {
     }
   }
 
+  // Links para la navbar
+  const links = [
+    { href: "/UserPage", label: "Inicio" },
+    { href: "/match", label: "Match" },
+    { href: "/Psettings", label: "Perfil" },
+  ]
+
   const nextExercise = () => {
     if (currentExercise < filteredExercises.length - 1) {
       setCurrentExercise(currentExercise + 1)
@@ -143,54 +151,11 @@ export default function ExerciseRecommendations() {
     <div
       className={`flex min-h-screen flex-col transition duration-700 ease-in-out ${isDarkMode ? "bg-[#222b4b] text-white" : "bg-white text-black"}`}
     >
-      <header
-        className={`sticky top-0 z-50 w-full border-b ${isDarkMode ? "bg-[#01152b]" : "bg-[#faf6eb]"} backdrop-blur supports-[backdrop-filter]:bg-opacity-95`}
-      >
-        <div className="container flex h-16 items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Image
-              src={isDarkMode ? "/logo2.png" : "/logo1.png"}
-              alt="Spotter Logo"
-              width={42}
-              height={42}
-              className="h-16 w-16"
-            />
-            <span className="text-xl font-bold">Spotter</span>
-          </div>
-          <nav className="hidden md:flex gap-6">
-            <Link href="/UserPage" className="text-sm font-medium transition-colors hover:text-foreground/80">
-              Inicio
-            </Link>
-            <Link href="/match" className="text-sm font-medium transition-colors hover:text-foreground/80">
-              Match
-            </Link>
-            <Link href="/Psettings" className="text-sm font-medium transition-colors hover:text-foreground/80">
-              Perfil
-            </Link>
-          </nav>
-          <div className="hidden md:flex items-center gap-4">
-            <DarkModeToggle isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />
-          </div>
-          <button className="md:hidden flex items-center" onClick={() => setMenuOpen(!menuOpen)}>
-            <Menu className="h-6 w-6" />
-          </button>
-        </div>
-        {menuOpen && (
-          <div className="md:hidden flex flex-col items-center gap-4 p-4 bg-background">
-            <Link href="/UserPage" className="text-sm font-medium transition-colors hover:text-foreground/80">
-              Inicio
-            </Link>
-            <Link href="/match" className="text-sm font-medium transition-colors hover:text-foreground/80">
-              Match
-            </Link>
-            <Link href="/Psettings" className="text-sm font-medium transition-colors hover:text-foreground/80">
-              Perfil
-            </Link>
-            <DarkModeToggle isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />
-          </div>
-        )}
-      </header>
-
+      <Navbar
+        isDarkMode={isDarkMode}
+        toggleDarkMode={toggleDarkMode}
+        links={links}
+      />
       <main className="flex-1 container py-8">
         <div className="space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
