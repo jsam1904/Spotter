@@ -11,24 +11,39 @@ const navItems = [
   { label: "Ejercicios", href: "/dashboard/exercises" },
 ];
 
-export default function SideNav() {
+export default function SideNav({
+  isDarkMode,
+  toggleDarkMode,
+}: {
+  isDarkMode: boolean;
+  toggleDarkMode: () => void;
+}) {
   const pathname = usePathname();
 
   return (
-    <aside className="w-64 bg-[#faf6eb] text-black p-4 space-y-4">
+    <aside
+      className={clsx(
+        "w-64 p-4 space-y-4 transition-colors",
+        isDarkMode ? "bg-[#222b4b] text-white" : "bg-[#faf6eb] text-black"
+      )}
+    >
       <div className="flex items-center gap-2 mb-2">
-        <img src="/logo1.png" alt="Logo" className="w-20 h-20" />
+        <img src={isDarkMode ? "/logo2.png" : "/logo1.png"} alt="Logo" className="w-20 h-20"/>
         <span className="text-xl font-bold">Admin</span>
       </div>
       <ul className="space-y-2">
-        {navItems.map(item => (
+        {navItems.map((item) => (
           <li key={item.href}>
             <Link
               href={item.href}
               className={clsx(
                 "block px-3 py-2 rounded-md",
                 pathname === item.href
-                  ? "bg-white font-semibold"
+                  ? isDarkMode
+                    ? "bg-[#01152b] font-semibold"
+                    : "bg-white font-semibold"
+                  : isDarkMode
+                  ? "hover:bg-[#2c365a]"
                   : "hover:bg-stone-300"
               )}
             >
