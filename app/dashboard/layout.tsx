@@ -28,9 +28,9 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   };
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen bg-white dark:bg-gray-900 transition-colors">
       <SideNav isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />
-      <main className="flex-1 p-6 bg-background relative">
+      <main className="flex-1 p-6 relative">
         <div className="absolute top-6 right-6 z-10">
           <DarkModeToggle isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />
         </div>

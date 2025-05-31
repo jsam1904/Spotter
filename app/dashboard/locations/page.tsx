@@ -95,11 +95,12 @@ export default function UsersPage() {
 
     return (
         <div className="p-6 max-w-6xl mx-auto bg-background">
-            <div className="flex justify-between items-center mb-6">
+            <div className="flex justify-between items-center mb-6 mt-4">
                 <h1 className="text-3xl font-bold">Ubicaciones</h1>
                 <button
                     onClick={() => setIsOpen(true)}
-                    className="bg-[#e6790c] text-white px-4 py-2 rounded hover:bg-green-700"
+                    className="bg-[#e6790c] text-white px-4 py-2 rounded hover:bg-green-700
+               dark:bg-blue-500 dark:hover:bg-blue-600 transition-colors"
                 >
                     + Agregar Ubicación
                 </button>
@@ -118,14 +119,15 @@ export default function UsersPage() {
                     setTerm(e.target.value);
                     setCurrentPage(1);
                 }}
-                className="mb-4 px-4 py-2 border rounded w-full md:w-1/2"
+                className="mb-4 px-4 py-2 border rounded w-full md:w-1/2 bg-white text-black placeholder-gray-500 border-gray-300
+               dark:bg-gray-800 dark:text-white dark:placeholder-gray-400 dark:border-gray-700 transition-colors"
             />
 
             <table className="min-w-full border border-gray-300 border-collapse">
                 <thead>
-                    <tr className={`${isDarkMode ? "bg-[#01152b]" : "bg-white"}`}>
-                        <th className="border border-gray-300 px-4 py-2 text-left">Nombre</th>
-                        <th className="border border-gray-300 px-4 py-2 text-left">Acciones</th>
+                    <tr className="bg-white dark:bg-gray-900">
+                        <th className="border border-gray-300 px-4 py-2 text-left font-bold bg-white dark:bg-gray-900 dark:text-white">Nombre</th>
+                        <th className="border border-gray-300 px-4 py-2 text-left font-bold bg-white dark:bg-gray-900 dark:text-white">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
