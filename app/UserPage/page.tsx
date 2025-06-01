@@ -12,6 +12,7 @@ import { useMapEvents } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
 import { DarkModeToggle } from "@/components/ui/DarkModeToggle"
 import { Navbar } from "@/components/ui/Navbar"
+import  LoadingSpinner from "@/components/loading-spinner";
 
 // Icono naranja para gimnasios
 const orangeIcon = new L.Icon({
@@ -64,6 +65,7 @@ export default function LandingPage() {
   const [suggestMsg, setSuggestMsg] = useState("")
   const [suggestMarker, setSuggestMarker] = useState<{ lat: number; lng: number } | null>(null)
   const [search, setSearch] = useState("")
+  const [loading, setLoading] = useState(true)
 
   const formRef = useRef<HTMLFormElement>(null)
   const router = useRouter()
@@ -101,10 +103,12 @@ export default function LandingPage() {
     }
 
     // Fetch gyms
+    setLoading(true);
     fetch("http://localhost:3000/gym/verified")
       .then(res => res.json())
       .then(setGyms)
       .catch(() => setGyms([]))
+      .finally(() => setLoading(false));
   }, [router])
 
   // Toggle dark mode
@@ -277,6 +281,14 @@ export default function LandingPage() {
     { href: "/recomendation", label: "Recomendaciones" },
     { href: "/Psettings", label: "Perfil" },
   ]
+
+  if (loading) {
+    return (
+      <div>
+        <LoadingSpinner />
+      </div>
+    );
+  }
 
   return (
     <div className={`flex min-h-screen flex-col transition duration-700 ease-in-out ${isDarkMode ? "bg-[#222b4b] text-white" : "bg-white text-black"}`}>

@@ -5,6 +5,7 @@ import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
 import { Navbar } from "@/components/ui/Navbar"
 
+import LoadingSpinner from '@/components/loading-spinner';
 
 interface Message {
   senderEmail: string;
@@ -46,6 +47,7 @@ export default function ChatPage() {
   const [matches, setMatches] = useState<Match[]>([]);
   const [selectedMatch, setSelectedMatch] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const storedTheme = localStorage.getItem("theme")
@@ -95,8 +97,14 @@ export default function ChatPage() {
             setReceiverEmail(defaultMatch);
             setSelectedMatch(defaultMatch);
           }
+          setLoading(false);
         })
-        .catch((err) => console.error('Error loading matches', err));
+        .catch((err) => {
+          console.error('Error loading matches', err);
+          setLoading(false);
+        });
+    } else {
+      setLoading(false);
     }
     setIsReady(true);
   }, []);
@@ -170,6 +178,7 @@ export default function ChatPage() {
       Math.floor((ts.nanosecond?.low ?? 0) / 1e6)
     );
   }
+  if (loading) return <LoadingSpinner />;
 
   if (!isReady) return null;
 

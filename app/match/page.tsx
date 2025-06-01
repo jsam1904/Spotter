@@ -13,6 +13,7 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import { DarkModeToggle } from "../../components/ui/DarkModeToggle";
 import { Navbar } from "../../components/ui/Navbar"; // <-- Importa tu Navbar
+import LoadingSpinner from "../../components/loading-spinner";
 
 // Define TypeScript interface for user data
 interface User {
@@ -40,6 +41,7 @@ export default function FindMatches() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [currentImageIndices, setCurrentImageIndices] = useState<number[]>([]); // Track current image index for each user
+  const [loading, setLoading] = useState(true);
 
   // Get email from JWT token
   const getUserEmail = () => {
@@ -59,8 +61,10 @@ export default function FindMatches() {
   // Fetch recommended users
   useEffect(() => {
     const fetchRecommendations = async () => {
+      setLoading(true); // <-- Activa loading al iniciar la carga
       const userEmail = getUserEmail();
       if (!userEmail) {
+        setLoading(false); // <-- Desactiva loading si hay error
         Swal.fire({
           icon: "error",
           title: "Error",
@@ -85,9 +89,11 @@ export default function FindMatches() {
             (gender === "Todos" || user.gender === gender)
         );
         setMatches(filteredUsers);
-        setCurrentImageIndices(new Array(filteredUsers.length).fill(0)); // Initialize image indices
+        setCurrentImageIndices(new Array(filteredUsers.length).fill(0));
         setCurrentIndex(0);
+        setLoading(false); // <-- Desactiva loading al terminar
       } catch (error) {
+        setLoading(false); // <-- Desactiva loading si hay error
         console.error("Error fetching recommendations:", error);
         Swal.fire({
           icon: "error",
@@ -255,6 +261,14 @@ export default function FindMatches() {
       Filtros
     </Button>
   );
+
+  if (loading) {
+    return (
+      <div>
+        <LoadingSpinner />
+      </div>
+    );
+  }
 
   return (
     <div
