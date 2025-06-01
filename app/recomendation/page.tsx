@@ -9,7 +9,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Heart, Filter, ChevronLeft, ChevronRight, Sun, Moon, Menu, Dumbbell } from "lucide-react"
 import { DarkModeToggle } from "@/components/ui/DarkModeToggle"
-import { Navbar } from "@/components/ui/Navbar" // <-- Importa tu Navbar
+import { Navbar } from "@/components/ui/Navbar"
+import LoadingSpinner from "@/components/loading-spinner"
 
 // Datos de ejemplo para ejercicios
 const exercisesData = [
@@ -91,6 +92,7 @@ export default function ExerciseRecommendations() {
   const [currentExercise, setCurrentExercise] = useState(0)
   const [savedExercises, setSavedExercises] = useState<number[]>([])
   const [muscleFilter, setMuscleFilter] = useState("all")
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const storedTheme = localStorage.getItem("theme")
@@ -98,6 +100,9 @@ export default function ExerciseRecommendations() {
       setIsDarkMode(true)
       document.documentElement.classList.add("dark")
     }
+    // Simula carga de datos
+    const timer = setTimeout(() => setLoading(false), 1000)
+    return () => clearTimeout(timer)
   }, [])
 
   const toggleDarkMode = () => {
@@ -146,6 +151,14 @@ export default function ExerciseRecommendations() {
   useEffect(() => {
     setCurrentExercise(0)
   }, [muscleFilter])
+
+  if (loading) {
+    return (
+      <div>
+        <LoadingSpinner />
+      </div>
+    )
+  }
 
   return (
     <div
