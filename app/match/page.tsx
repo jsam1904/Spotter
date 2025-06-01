@@ -58,54 +58,49 @@ export default function FindMatches() {
     return null;
   };
 
-  // Fetch recommended users
-  useEffect(() => {
-    const fetchRecommendations = async () => {
-      setLoading(true); // <-- Activa loading al iniciar la carga
-      const userEmail = getUserEmail();
-      if (!userEmail) {
-        setLoading(false); // <-- Desactiva loading si hay error
-        Swal.fire({
-          icon: "error",
-          title: "Error",
-          text: "No se pudo obtener el correo del usuario. Por favor, inicia sesión nuevamente.",
-          timer: 3000,
-          showConfirmButton: false,
-        });
-        return;
-      }
-      try {
-        const response = await axios.get(`http://localhost:3000/users/${userEmail}/recommend-users`);
-        // Access the recommendations array from the response
-        const users: User[] = response.data.recommendations.map((user: any) => ({
-          ...user,
-          age: parseInt(user.age, 10), // Convert age from string to number
-        }));
-        // Filter users based on age and gender
-        const filteredUsers = users.filter(
-          (user) =>
-            user.age >= ageRange[0] &&
-            user.age <= ageRange[1] &&
-            (gender === "Todos" || user.gender === gender)
-        );
-        setMatches(filteredUsers);
-        setCurrentImageIndices(new Array(filteredUsers.length).fill(0));
-        setCurrentIndex(0);
-        setLoading(false); // <-- Desactiva loading al terminar
-      } catch (error) {
-        setLoading(false); // <-- Desactiva loading si hay error
-        console.error("Error fetching recommendations:", error);
-        Swal.fire({
-          icon: "error",
-          title: "Error",
-          text: "No se pudieron cargar las recomendaciones. Intenta de nuevo más tarde.",
-          timer: 3000,
-          showConfirmButton: false,
-        });
-      }
-    };
-    fetchRecommendations();
-  }, [ageRange, gender]);
+  // Mueve fetchRecommendations aquí para poder reutilizarla
+  const fetchRecommendations = async () => {
+    setLoading(true);
+    const userEmail = getUserEmail();
+    if (!userEmail) {
+      setLoading(false);
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "No se pudo obtener el correo del usuario. Por favor, inicia sesión nuevamente.",
+        timer: 3000,
+        showConfirmButton: false,
+      });
+      return;
+    }
+    try {
+      const response = await axios.get(`http://localhost:3000/users/${userEmail}/recommend-users`);
+      const users: User[] = response.data.recommendations.map((user: any) => ({
+        ...user,
+        age: parseInt(user.age, 10),
+      }));
+      const filteredUsers = users.filter(
+        (user) =>
+          user.age >= ageRange[0] &&
+          user.age <= ageRange[1] &&
+          (gender === "Todos" || user.gender === gender)
+      );
+      setMatches(filteredUsers);
+      setCurrentImageIndices(new Array(filteredUsers.length).fill(0));
+      setCurrentIndex(0);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      console.error("Error fetching recommendations:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "No se pudieron cargar las recomendaciones. Intenta de nuevo más tarde.",
+        timer: 3000,
+        showConfirmButton: false,
+      });
+    }
+  };
 
   // Handle theme toggle
   useEffect(() => {
@@ -234,11 +229,13 @@ export default function FindMatches() {
     }
   };
 
+  // Modifica resetCards para volver a pedir recomendaciones
   const resetCards = () => {
     setCurrentIndex(0);
     setLikedProfiles([]);
     setDislikedProfiles([]);
     setCurrentImageIndices(new Array(matches.length).fill(0));
+    fetchRecommendations(); // <-- vuelve a pedir recomendaciones
   };
 
   // Links para la navbar
@@ -261,6 +258,11 @@ export default function FindMatches() {
       Filtros
     </Button>
   );
+
+  useEffect(() => {
+    fetchRecommendations();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ageRange, gender]);
 
   if (loading) {
     return (
@@ -309,8 +311,8 @@ export default function FindMatches() {
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="Todos">Todos</SelectItem>
-                          <SelectItem value="Hombre">Hombre</SelectItem>
-                          <SelectItem value="Mujer">Mujer</SelectItem>
+                          <SelectItem value="Masculino">Masculino</SelectItem>
+                          <SelectItem value="Femenino">Femenino</SelectItem>
                           <SelectItem value="Otro">Otro</SelectItem>
                         </SelectContent>
                       </Select>
