@@ -41,10 +41,10 @@ export default function UsersPage() {
     const data = await API.getUsers();
     setUsers(data);
   };
-  const handleDelete = async (username: string) => {
+  const handleDelete = async (email: string) => {
     const result = await Swal.fire({
       title: "¿Estás seguro?",
-      text: `Esto eliminará al usuario "${username}".`,
+      text: `Esto eliminará al usuario con email "${email}".`,
       icon: "warning",
       showCancelButton: true,
       confirmButtonText: "Sí, eliminar",
@@ -53,7 +53,7 @@ export default function UsersPage() {
 
     if (result.isConfirmed) {
       try {
-        await API.deleteUser(username);
+        await API.deleteUser({ email });
         Swal.fire({
           icon: "success",
           title: "Usuario eliminado",
@@ -189,7 +189,7 @@ export default function UsersPage() {
                     <Pencil size={18} />
                   </button>
                   <button
-                    onClick={() => handleDelete(user.username)}
+                    onClick={() => handleDelete(user.email)}
                     className="p-2 bg-red-500 text-white rounded hover:bg-red-600"
                     title="Eliminar"
                   >

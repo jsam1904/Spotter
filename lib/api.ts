@@ -8,7 +8,8 @@ export default class API {
         return res.json();
     }
 
-    static async registerUser(user: { name: string; username: string; password: string; email: string; gender: string; age: string; user_type: string; }) {
+    static async registerUser(user: { name: string; email: string; password: string; gender: string; age: string; user_type: string; }) {
+        // El email ya viene en el objeto user, no hay que cambiar nada aquí
         const res = await fetch("http://localhost:3000/users/register", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -19,8 +20,10 @@ export default class API {
 
         return res.json();
     }
-    static async deleteUser(username: string) {
-        const res = await fetch(`http://localhost:3000/users/delete/${username}`, {
+
+    static async deleteUser(user: { email: string }) {
+        // Recibe un objeto usuario y extrae el email
+        const res = await fetch(`http://localhost:3000/users/delete/${user.email}`, {
             method: "DELETE",
         });
         if (!res.ok) {
@@ -28,12 +31,14 @@ export default class API {
         }
         return await res.json();
     }
-    static async updateUser(username: string, data: { name: string; email: string; gender: string; age: string; user_type: string; }) {
-        const res = await fetch(`http://localhost:3000/users/updateUser/${username}`, {
+
+    static async updateUser(user: { email: string; name: string; gender: string; age: string; user_type: string; }) {
+        // Recibe un objeto usuario y usa el email en la URL
+        const res = await fetch(`http://localhost:3000/users/updateUser/${user.email}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data),
-        })
+            body: JSON.stringify(user),
+        });
         if (!res.ok) {
             throw new Error("Error al actualizar usuario");
         }
