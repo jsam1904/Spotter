@@ -10,6 +10,7 @@ import { Heart, ChevronLeft, ChevronRight, Dumbbell } from "lucide-react"
 import { Navbar } from "@/components/ui/Navbar"
 import LoadingSpinner from "@/components/loading-spinner"
 import LogoutButton from "@/components/logoutButton"
+import { DarkModeToggle } from "@/components/ui/DarkModeToggle"
 
 interface Exercise {
   img: string
@@ -18,7 +19,13 @@ interface Exercise {
 }
 
 export default function ExerciseRecommendations() {
-  const [isDarkMode, setIsDarkMode] = useState(false)
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("isDarkMode")
+      return stored === "true"
+    }
+    return false
+  })
   const [currentExercise, setCurrentExercise] = useState(0)
   const [savedExercises, setSavedExercises] = useState<number[]>([])
   const [exercises, setExercises] = useState<Exercise[]>([])
@@ -56,6 +63,11 @@ export default function ExerciseRecommendations() {
     fetchExercises()
   }, [])
 
+  // Guardar preferencia cada vez que cambie
+  useEffect(() => {
+    localStorage.setItem("isDarkMode", isDarkMode.toString())
+  }, [isDarkMode])
+
   const links = [
     { href: "/UserPage", label: "Inicio" },
     { href: "/match", label: "Match" },
@@ -90,7 +102,11 @@ export default function ExerciseRecommendations() {
 
   return (
     <div className={`flex min-h-screen flex-col transition duration-700 ease-in-out ${isDarkMode ? "bg-[#222b4b] text-white" : "bg-white text-black"}`}>
-      <Navbar isDarkMode={isDarkMode} toggleDarkMode={() => setIsDarkMode(!isDarkMode)} links={links} />
+      <Navbar
+        isDarkMode={isDarkMode}
+        toggleDarkMode={() => setIsDarkMode(!isDarkMode)}
+        links={links}
+      />
       <main className="flex-1 container py-8">
         <div className="space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
