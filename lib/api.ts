@@ -8,6 +8,12 @@ export default class API {
         return res.json();
     }
 
+    static async getUserByEmail(email: String) {
+        const res = await fetch(`http://localhost:3000/users/${email}`);
+        if (!res.ok) throw new Error("Failed to fetch users");
+        return res.json();
+    }
+
     static async registerUser(user: { name: string; username: string; password: string; email: string; gender: string; age: string; user_type: string; }) {
         const res = await fetch("http://localhost:3000/users/register", {
             method: "POST",
@@ -19,8 +25,21 @@ export default class API {
 
         return res.json();
     }
-    static async deleteUser(username: string) {
-        const res = await fetch(`http://localhost:3000/users/delete/${username}`, {
+
+    static async updateAndVerifyPassword(email: string, currentPassword: string, password: string) {
+        const res = await fetch(`http://localhost:3000/users/updatePass/${email}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ currentPassword, newPassword: password })
+        });
+
+        if (!res.ok) throw new Error("failed to updatePass");
+
+        return res.json();
+    }
+    
+    static async deleteUser(email: string) {
+        const res = await fetch(`http://localhost:3000/users/delete/${email}`, {
             method: "DELETE",
         });
         if (!res.ok) {
@@ -28,8 +47,8 @@ export default class API {
         }
         return await res.json();
     }
-    static async updateUser(username: string, data: { name: string; email: string; gender: string; age: string; user_type: string; }) {
-        const res = await fetch(`http://localhost:3000/users/updateUser/${username}`, {
+    static async updateUser(email: string, data: { name: string; username: string; gender: string; age: string; user_type: string; }) {
+        const res = await fetch(`http://localhost:3000/users/updateUser/${email}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(data),
@@ -83,7 +102,7 @@ export default class API {
         const res = await fetch(`http://localhost:3000/exercise/register`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(exercise), 
+            body: JSON.stringify(exercise),
         });
 
         if (!res.ok) throw new Error("Failed to register exercise");
@@ -153,5 +172,34 @@ export default class API {
             throw new Error("Error al actualizar ubicación");
         }
         return await res.json();
+    }
+
+    //gym
+    static async getGyms() {
+        const res = await fetch(`http://localhost:3000/gym/`, { method: "GET" })
+
+        if (!res.ok) throw new Error("Failed to get gyms");
+
+        return res.json();
+    }
+
+    static async getActualGym(email: string) {
+        const res = await fetch(`http://localhost:3000/users/goes_at/${email}`, { method: "GET" })
+
+        if (!res.ok) throw new Error("Failed to get gyms");
+
+        return res.json();
+    }
+
+    static async changeGym(email: string, data: { name: string; }) {
+        const res = await fetch(`http://localhost:3000/users/changeGym/${email}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+        })
+
+        if (!res.ok) throw new Error("Failed to get gyms");
+
+        return res.json();
     }
 }
