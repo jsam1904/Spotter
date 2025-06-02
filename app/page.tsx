@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ArrowRight, Dumbbell, Users, Search, Menu, Sun, Moon, Calendar } from "lucide-react"
 import { DarkModeToggle } from "@/components/ui/DarkModeToggle"
-import { Navbar } from "@/components/ui/Navbar" // <-- Importa tu Navbar
+import { Navbar } from "@/components/ui/Navbar"
 
 export default function LandingPage() {
   const [isDarkMode, setIsDarkMode] = useState(false)
@@ -71,6 +71,7 @@ export default function LandingPage() {
         toggleDarkMode={toggleDarkMode}
         links={links}
         actions={actions}
+        showLogoutButton={false}
       />
       <main className="flex-1">
         <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48">
@@ -276,15 +277,7 @@ export default function LandingPage() {
                 <p className="text-muted-foreground">
                   Encuentra personas en tu zona que comparten tus objetivos fitness.
                 </p>
-                <div className="flex flex-col space-y-2">
-                  <div className="flex gap-2">
-                    <Input placeholder="Tu ubicación" />
-                    <Button variant="outline">
-                      <Search className="h-4 w-4" />
-                    </Button>
-                  </div>
-                  <p className="text-xs text-muted-foreground">Ejemplo: Madrid, Barcelona, Valencia...</p>
-                </div>
+
               </div>
             </div>
           </div>
@@ -352,7 +345,7 @@ export default function LandingPage() {
         <div className="container flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
           <div className="flex items-center gap-2">
             <Image
-              src={isDarkMode ? "/logo2.jpg" : "/logo1.jpg"}
+              src={isDarkMode ? "/logo2.png" : "/logo1.png"}
               alt="Spotter Logo"
               width={32}
               height={32}

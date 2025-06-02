@@ -5,6 +5,7 @@ import { Menu } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { DarkModeToggle } from "@/components/ui/DarkModeToggle"
 import { ReactNode, useState } from "react"
+import LogoutButton from "../LogoutButton"
 
 interface NavLink {
   href: string
@@ -15,11 +16,12 @@ interface NavbarProps {
   isDarkMode: boolean
   toggleDarkMode: () => void
   links: NavLink[]
-  actions?: ReactNode // <-- Nueva prop opcional para botones personalizados
+  actions?: ReactNode
+  showLogoutButton?: boolean 
 }
 
-export function Navbar({ isDarkMode, toggleDarkMode, links, actions }: NavbarProps) {
-  const [menuOpen, setMenuOpen] = useState(false)
+export function Navbar({ isDarkMode, toggleDarkMode, links, actions, showLogoutButton = true }: NavbarProps) {
+  const [menuOpen, setMenuOpen] = useState(false);
 
   return (
     <header className={`sticky top-0 z-50 w-full border-b ${isDarkMode ? "bg-[#01152b]" : "bg-[#faf6eb]"} backdrop-blur supports-[backdrop-filter]:bg-opacity-95`}>
@@ -43,6 +45,7 @@ export function Navbar({ isDarkMode, toggleDarkMode, links, actions }: NavbarPro
         </nav>
         <div className="hidden md:flex items-center gap-4">
           <DarkModeToggle isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />
+          {showLogoutButton && <LogoutButton isDarkMode={isDarkMode} />}
           {actions}
         </div>
         <button
@@ -60,9 +63,10 @@ export function Navbar({ isDarkMode, toggleDarkMode, links, actions }: NavbarPro
             </Link>
           ))}
           <DarkModeToggle isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />
+          {showLogoutButton && <LogoutButton isDarkMode={isDarkMode} />}
           {actions}
         </div>
       )}
     </header>
-  )
+  );
 }

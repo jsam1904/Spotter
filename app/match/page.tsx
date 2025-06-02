@@ -12,7 +12,7 @@ import { motion, type PanInfo, useMotionValue, useTransform } from "framer-motio
 import axios from "axios";
 import Swal from "sweetalert2";
 import { DarkModeToggle } from "../../components/ui/DarkModeToggle";
-import { Navbar } from "../../components/ui/Navbar"; // <-- Importa tu Navbar
+import { Navbar } from "../../components/ui/Navbar"; 
 import LoadingSpinner from "../../components/loading-spinner";
 
 // Define TypeScript interface for user data
@@ -258,14 +258,6 @@ export default function FindMatches() {
         <Filter className="h-4 w-4 mr-2" />
         Filtros
       </Button>
-        <Link href="/">
-          <Button
-            variant="outline"
-            className={`hidden md:inline-flex ${isDarkMode ? "bg-gray-800 text-white hover:bg-gray-700" : "bg-[#e6790c] text-white hover:bg-rose-700"}`}
-          >
-            Cerrar sesión
-          </Button>
-        </Link>
     </>
   );
 

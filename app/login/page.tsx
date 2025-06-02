@@ -67,7 +67,18 @@ export default function LoginPage() {
           text: "Bienvenido a Spotter",
         }).then(() => {
           localStorage.setItem("token", response.data.token);
-          router.push("/UserPage");
+
+          try {
+            const token = JSON.parse(atob(response.data.token.split(".")[1]));
+            console.log("Token decodificado:", token);
+            if (token.user_type == "Admin") {
+              router.push("/dashboard");
+            } else {
+              router.push("/UserPage");
+            }
+          } catch (e) {
+            router.push("/UserPage");
+          }
         });
       } else {
         Swal.fire({
