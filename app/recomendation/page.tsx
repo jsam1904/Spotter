@@ -123,6 +123,19 @@ export default function ExerciseRecommendations() {
     { href: "/match", label: "Match" },
     { href: "/Psettings", label: "Perfil" },
   ]
+  
+  const actions = (
+      <>
+        <Link href="/">
+          <Button
+            variant="outline"
+            className={`hidden md:inline-flex ${isDarkMode ? "bg-gray-800 text-white hover:bg-gray-700" : "bg-[#e6790c] text-white hover:bg-rose-700"}`}
+          >
+            Cerrar sesión
+          </Button>
+        </Link>
+      </>
+    )
 
   const nextExercise = () => {
     if (currentExercise < filteredExercises.length - 1) {
@@ -168,6 +181,7 @@ export default function ExerciseRecommendations() {
         isDarkMode={isDarkMode}
         toggleDarkMode={toggleDarkMode}
         links={links}
+        actions={actions}
       />
       <main className="flex-1 container py-8">
         <div className="space-y-6">

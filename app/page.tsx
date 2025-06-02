@@ -41,7 +41,6 @@ export default function LandingPage() {
     { href: "#vision", label: "Visión y Misión" },
   ]
 
-  // Botones de acciones para la navbar
   const actions = (
     <>
       <Link href="/login">

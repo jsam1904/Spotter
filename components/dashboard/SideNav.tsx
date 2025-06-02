@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import clsx from "clsx";
+import { Button } from "@/components/ui/button";
 
 const navItems = [
   { label: "Usuarios", href: "/dashboard/users" },
@@ -51,6 +52,16 @@ export default function SideNav({
             </Link>
           </li>
         ))}
+                            <>
+        <Link href="/">
+          <Button
+            variant="outline"
+            className={`hidden md:inline-flex mb-6 mt-4 ${isDarkMode ? "bg-gray-800 text-white hover:bg-gray-700" : "bg-[#e6790c] text-white hover:bg-rose-700"}`}
+          >
+            Cerrar sesión
+          </Button>
+        </Link>
+      </>
       </ul>
     </aside>
   );
