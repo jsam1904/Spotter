@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import clsx from "clsx";
+import LogoutButton from "../LogoutButton";
 
 const navItems = [
   { label: "Usuarios", href: "/dashboard/users" },
@@ -51,6 +52,7 @@ export default function SideNav({
             </Link>
           </li>
         ))}
+           <LogoutButton isDarkMode={isDarkMode} />     
       </ul>
     </aside>
   );

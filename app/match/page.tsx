@@ -12,7 +12,8 @@ import { motion, type PanInfo, useMotionValue, useTransform } from "framer-motio
 import axios from "axios";
 import Swal from "sweetalert2";
 import { DarkModeToggle } from "../../components/ui/DarkModeToggle";
-import { Navbar } from "../../components/ui/Navbar"; // <-- Importa tu Navbar
+import { Navbar } from "../../components/ui/Navbar"; 
+import LoadingSpinner from "../../components/loading-spinner";
 
 // Define TypeScript interface for user data
 interface User {
@@ -40,6 +41,7 @@ export default function FindMatches() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [currentImageIndices, setCurrentImageIndices] = useState<number[]>([]); // Track current image index for each user
+  const [loading, setLoading] = useState(true);
 
   // Get email from JWT token
   const getUserEmail = () => {
@@ -56,50 +58,49 @@ export default function FindMatches() {
     return null;
   };
 
-  // Fetch recommended users
-  useEffect(() => {
-    const fetchRecommendations = async () => {
-      const userEmail = getUserEmail();
-      if (!userEmail) {
-        Swal.fire({
-          icon: "error",
-          title: "Error",
-          text: "No se pudo obtener el correo del usuario. Por favor, inicia sesión nuevamente.",
-          timer: 3000,
-          showConfirmButton: false,
-        });
-        return;
-      }
-      try {
-        const response = await axios.get(`http://localhost:3000/users/${userEmail}/recommend-users`);
-        // Access the recommendations array from the response
-        const users: User[] = response.data.recommendations.map((user: any) => ({
-          ...user,
-          age: parseInt(user.age, 10), // Convert age from string to number
-        }));
-        // Filter users based on age and gender
-        const filteredUsers = users.filter(
-          (user) =>
-            user.age >= ageRange[0] &&
-            user.age <= ageRange[1] &&
-            (gender === "Todos" || user.gender === gender)
-        );
-        setMatches(filteredUsers);
-        setCurrentImageIndices(new Array(filteredUsers.length).fill(0)); // Initialize image indices
-        setCurrentIndex(0);
-      } catch (error) {
-        console.error("Error fetching recommendations:", error);
-        Swal.fire({
-          icon: "error",
-          title: "Error",
-          text: "No se pudieron cargar las recomendaciones. Intenta de nuevo más tarde.",
-          timer: 3000,
-          showConfirmButton: false,
-        });
-      }
-    };
-    fetchRecommendations();
-  }, [ageRange, gender]);
+  // Mueve fetchRecommendations aquí para poder reutilizarla
+  const fetchRecommendations = async () => {
+    setLoading(true);
+    const userEmail = getUserEmail();
+    if (!userEmail) {
+      setLoading(false);
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "No se pudo obtener el correo del usuario. Por favor, inicia sesión nuevamente.",
+        timer: 3000,
+        showConfirmButton: false,
+      });
+      return;
+    }
+    try {
+      const response = await axios.get(`http://localhost:3000/users/${userEmail}/recommend-users`);
+      const users: User[] = response.data.recommendations.map((user: any) => ({
+        ...user,
+        age: parseInt(user.age, 10),
+      }));
+      const filteredUsers = users.filter(
+        (user) =>
+          user.age >= ageRange[0] &&
+          user.age <= ageRange[1] &&
+          (gender === "Todos" || user.gender === gender)
+      );
+      setMatches(filteredUsers);
+      setCurrentImageIndices(new Array(filteredUsers.length).fill(0));
+      setCurrentIndex(0);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      console.error("Error fetching recommendations:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "No se pudieron cargar las recomendaciones. Intenta de nuevo más tarde.",
+        timer: 3000,
+        showConfirmButton: false,
+      });
+    }
+  };
 
   // Handle theme toggle
   useEffect(() => {
@@ -228,11 +229,13 @@ export default function FindMatches() {
     }
   };
 
+  // Modifica resetCards para volver a pedir recomendaciones
   const resetCards = () => {
     setCurrentIndex(0);
     setLikedProfiles([]);
     setDislikedProfiles([]);
     setCurrentImageIndices(new Array(matches.length).fill(0));
+    fetchRecommendations(); // <-- vuelve a pedir recomendaciones
   };
 
   // Links para la navbar
@@ -245,16 +248,31 @@ export default function FindMatches() {
 
   // Botón de filtros como acción personalizada
   const actions = (
-    <Button
-      variant="outline"
-      size="sm"
-      onClick={() => setFiltersOpen(!filtersOpen)}
-      className={isDarkMode ? "bg-gray-700 text-white" : "bg-gray-200 text-black"}
-    >
-      <Filter className="h-4 w-4 mr-2" />
-      Filtros
-    </Button>
+    <>
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => setFiltersOpen(!filtersOpen)}
+        className={isDarkMode ? "bg-gray-700 text-white" : "bg-gray-200 text-black"}
+      >
+        <Filter className="h-4 w-4 mr-2" />
+        Filtros
+      </Button>
+    </>
   );
+
+  useEffect(() => {
+    fetchRecommendations();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ageRange, gender]);
+
+  if (loading) {
+    return (
+      <div>
+        <LoadingSpinner />
+      </div>
+    );
+  }
 
   return (
     <div
@@ -295,8 +313,8 @@ export default function FindMatches() {
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="Todos">Todos</SelectItem>
-                          <SelectItem value="Hombre">Hombre</SelectItem>
-                          <SelectItem value="Mujer">Mujer</SelectItem>
+                          <SelectItem value="Masculino">Masculino</SelectItem>
+                          <SelectItem value="Femenino">Femenino</SelectItem>
                           <SelectItem value="Otro">Otro</SelectItem>
                         </SelectContent>
                       </Select>

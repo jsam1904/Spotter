@@ -5,34 +5,37 @@ import API from "@/lib/api";
 import Swal from "sweetalert2";
 import RegisterModal from "./registerModal";
 import UpdateModal from "./updateModal";
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil, Trash2, CheckCircle2 } from "lucide-react";
 
-interface Location {
-    id: string;
+interface Gym {
+    gymId: string;
     name: string;
+    description: string;
+    latitude: number;
+    longitude: number;
+    verified: boolean;
 }
 
-const USERS_PER_PAGE = 8;
+const GYMS_PER_PAGE = 8;
 
-export default function UsersPage() {
-    const [location, setLocation] = useState<any[]>([]);
+export default function GymsPage() {
+    const [gyms, setGyms] = useState<Gym[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [isDarkMode, setIsDarkMode] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
     const [term, setTerm] = useState('');
-    const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
+    const [selectedGym, setSelectedGym] = useState<Gym | null>(null);
     const [isEditOpen, setIsEditOpen] = useState(false);
 
-    const fetchLocations = async () => {
-        const data = await API.getLocations();
-        setLocation(data);
+    const fetchGyms = async () => {
+        const data = await API.getGyms();
+        setGyms(data);
     };
-    const handleDelete = async (location: any) => {
-        console.log("location a eliminar:", location);
-        const result = await Swal.fire({
 
+    const handleDelete = async (gym: Gym) => {
+        const result = await Swal.fire({
             title: "¿Estás seguro?",
-            text: `Esto eliminará la ubicación "${location.name}".`,
+            text: `Esto eliminará el gimnasio "${gym.name}".`,
             icon: "warning",
             showCancelButton: true,
             confirmButtonText: "Sí, eliminar",
@@ -41,28 +44,28 @@ export default function UsersPage() {
 
         if (result.isConfirmed) {
             try {
-                await API.deleteLocation(location.id);
+                await API.deleteGym(gym.gymId);
                 Swal.fire({
                     icon: "success",
-                    title: "Ubicación eliminada",
-                    text: "La ubicación fue eliminada correctamente.",
+                    title: "Gimnasio eliminado",
+                    text: "El gimnasio fue eliminado correctamente.",
                     timer: 2000,
                     showConfirmButton: false,
                 });
 
-                fetchLocations();
+                fetchGyms();
             } catch (err) {
                 Swal.fire({
                     icon: "error",
                     title: "Error",
-                    text: "No se pudo eliminar la ubicación.",
+                    text: "No se pudo eliminar el gimnasio.",
                 });
             }
         }
     };
-    useEffect(() => {
-        fetchLocations();
 
+    useEffect(() => {
+        fetchGyms();
         const storedTheme = localStorage.getItem("theme");
         if (storedTheme === "dark") {
             setIsDarkMode(true);
@@ -70,23 +73,22 @@ export default function UsersPage() {
         }
     }, []);
 
-    const openEditModal = (location: Location) => {
-        setSelectedLocation(location);
+    const openEditModal = (gym: Gym) => {
+        setSelectedGym(gym);
         setIsEditOpen(true);
     };
 
-    const filteredLocation = location.filter(location => {
+    const filteredGyms = gyms.filter(gym => {
         const lowerTerm = term.toLowerCase();
         return (
-            location.name?.toLowerCase().includes(lowerTerm)
+            gym.name?.toLowerCase().includes(lowerTerm)
         );
     });
 
-
-    const totalPages = Math.ceil(filteredLocation.length / USERS_PER_PAGE);
-    const indexOfLastUser = currentPage * USERS_PER_PAGE;
-    const indexOfFirstUser = indexOfLastUser - USERS_PER_PAGE;
-    const paginatedUsers = filteredLocation.slice(indexOfFirstUser, indexOfLastUser);
+    const totalPages = Math.ceil(filteredGyms.length / GYMS_PER_PAGE);
+    const indexOfLastGym = currentPage * GYMS_PER_PAGE;
+    const indexOfFirstGym = indexOfLastGym - GYMS_PER_PAGE;
+    const paginatedGyms = filteredGyms.slice(indexOfFirstGym, indexOfLastGym);
 
     function goToPage(page: number) {
         if (page < 1 || page > totalPages) return;
@@ -96,18 +98,18 @@ export default function UsersPage() {
     return (
         <div className="p-6 max-w-6xl mx-auto bg-background">
             <div className="flex justify-between items-center mb-6 mt-4">
-                <h1 className="text-3xl font-bold">Ubicaciones</h1>
+                <h1 className="text-3xl font-bold">Gimnasios</h1>
                 <button
                     onClick={() => setIsOpen(true)}
                     className="bg-[#e6790c] text-white px-4 py-2 rounded hover:bg-green-700
                dark:bg-blue-500 dark:hover:bg-blue-600 transition-colors"
                 >
-                    + Agregar Ubicación
+                    + Agregar Gimnasio
                 </button>
                 <RegisterModal
                     isOpen={isOpen}
                     onClose={() => setIsOpen(false)}
-                    onSuccess={fetchLocations}
+                    onSuccess={fetchGyms}
                 />
             </div>
 
@@ -127,31 +129,71 @@ export default function UsersPage() {
                 <thead>
                     <tr className="bg-white dark:bg-gray-900">
                         <th className="border border-gray-300 px-4 py-2 text-left font-bold bg-white dark:bg-gray-900 dark:text-white">Nombre</th>
+                        <th className="border border-gray-300 px-4 py-2 text-left font-bold bg-white dark:bg-gray-900 dark:text-white">Descripción</th>
+                        <th className="border border-gray-300 px-4 py-2 text-left font-bold bg-white dark:bg-gray-900 dark:text-white">Ubicación</th>
+                        <th className="border border-gray-300 px-4 py-2 text-left font-bold bg-white dark:bg-gray-900 dark:text-white">Verificado</th>
                         <th className="border border-gray-300 px-4 py-2 text-left font-bold bg-white dark:bg-gray-900 dark:text-white">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {paginatedUsers.length === 0 ? (
+                    {paginatedGyms.length === 0 ? (
                         <tr>
                             <td colSpan={5} className="text-center p-4">
-                                No hay ubicaciones que mostrar.
+                                No hay gimnasios que mostrar.
                             </td>
                         </tr>
                     ) : (
-                        paginatedUsers.map((location) => (
-                            <tr key={location.id} className="hover:bg-gray-50">
-                                <td className="border border-gray-300 px-4 py-2">{location.name}</td>
+                        paginatedGyms.map((gym) => (
+                            <tr key={gym.gymId} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                                <td className="border border-gray-300 px-4 py-2">{gym.name}</td>
+                                <td className="border border-gray-300 px-4 py-2">{gym.description}</td>
+                                <td className="border border-gray-300 px-4 py-2">
+                                    <span>Lat: {gym.latitude}</span>
+                                    <br />
+                                    <span>Lng: {gym.longitude}</span>
+                                </td>
+                                <td className="border border-gray-300 px-4 py-2">
+                                    {gym.verified ? (
+                                        <span className="text-green-600 font-bold flex items-center gap-1">
+                                            <CheckCircle2 size={18} /> Verificado
+                                        </span>
+                                    ) : (
+                                        <button
+                                            onClick={async () => {
+                                                try {
+                                                    await API.verifyGym(gym.gymId);
+                                                    Swal.fire({
+                                                        icon: "success",
+                                                        title: "Gimnasio verificado",
+                                                        timer: 1500,
+                                                        showConfirmButton: false,
+                                                    });
+                                                    fetchGyms();
+                                                } catch {
+                                                    Swal.fire({
+                                                        icon: "error",
+                                                        title: "Error",
+                                                        text: "No se pudo verificar el gimnasio.",
+                                                    });
+                                                }
+                                            }}
+                                            className="px-2 py-1 bg-green-500 text-white rounded hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700 transition-colors"
+                                        >
+                                            Verificar
+                                        </button>
+                                    )}
+                                </td>
                                 <td className="border border-gray-300 px-4 py-2 space-x-2">
                                     <button
-                                        onClick={() => openEditModal(location)}
-                                        className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                                        onClick={() => openEditModal(gym)}
+                                        className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 transition-colors"
                                         title="Editar"
                                     >
                                         <Pencil size={18} />
                                     </button>
                                     <button
-                                        onClick={() => handleDelete(location)}
-                                        className="p-2 bg-red-500 text-white rounded hover:bg-red-600"
+                                        onClick={() => handleDelete(gym)}
+                                        className="p-2 bg-red-500 text-white rounded hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700 transition-colors"
                                         title="Eliminar"
                                     >
                                         <Trash2 size={18} />
@@ -165,14 +207,14 @@ export default function UsersPage() {
             <UpdateModal
                 isOpen={isEditOpen}
                 onClose={() => setIsEditOpen(false)}
-                location={selectedLocation}
-                onSuccess={fetchLocations}
+                gym={selectedGym}
+                onSuccess={fetchGyms}
             />
             <div className="flex justify-center mt-4 space-x-2">
                 <button
                     onClick={() => goToPage(currentPage - 1)}
                     disabled={currentPage === 1}
-                    className="px-3 py-1 border rounded disabled:opacity-50"
+                    className="px-3 py-1 border rounded disabled:opacity-50 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                 >
                     Anterior
                 </button>
@@ -180,8 +222,7 @@ export default function UsersPage() {
                     <button
                         key={i}
                         onClick={() => goToPage(i + 1)}
-                        className={`px-3 py-1 border rounded ${currentPage === i + 1 ? "bg-blue-500 text-white" : ""
-                            }`}
+                        className={`px-3 py-1 border rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${currentPage === i + 1 ? "bg-blue-500 text-white dark:bg-blue-600" : ""}`}
                     >
                         {i + 1}
                     </button>
@@ -189,10 +230,9 @@ export default function UsersPage() {
                 <button
                     onClick={() => goToPage(currentPage + 1)}
                     disabled={currentPage === totalPages}
-                    className="px-3 py-1 border rounded disabled:opacity-50"
+                    className="px-3 py-1 border rounded disabled:opacity-50 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                 >
                     Siguiente
-
                 </button>
             </div>
         </div>

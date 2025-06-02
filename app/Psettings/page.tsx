@@ -14,8 +14,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { Camera, User, Bell, Shield, LogOut, Sun, Moon, Menu } from "lucide-react"
 import { DarkModeToggle } from "../../components/ui/DarkModeToggle"
 import API from "@/lib/api"
-import { Navbar } from "../../components/ui/Navbar" // <-- Importa tu Navbar
 import Swal from "sweetalert2";
+import { Navbar } from "../../components/ui/Navbar"
+import LoadingSpinner from "../../components/loading-spinner"
+
 
 export default function ProfileSettings() {
   const [profileImage, setProfileImage] = useState("https://via.placeholder.com/150?text=User")
@@ -183,6 +185,8 @@ export default function ProfileSettings() {
     fetchUserData()
   }, [])
 
+  const [loading, setLoading] = useState(true);
+
 
   useEffect(() => {
     console.log(userData)
@@ -192,6 +196,9 @@ export default function ProfileSettings() {
       document.documentElement.classList.add("dark")
     }
 
+    // Simula carga de datos
+    const timer = setTimeout(() => setLoading(false), 1000)
+    return () => clearTimeout(timer)
   }, [])
 
   const toggleDarkMode = () => {
@@ -244,13 +251,21 @@ export default function ProfileSettings() {
     }
   }
 
-  // Links para la navbar
   const links = [
     { href: "/UserPage", label: "Inicio" },
     { href: "/match", label: "Match" },
     { href: "/recomendation", label: "Recomendaciones" },
     { href: "/Psettings", label: "Perfil" },
   ]
+
+
+    if (loading) {
+      return (
+        <div>
+          <LoadingSpinner />
+        </div>
+      );
+    }
 
   return (
     <div
