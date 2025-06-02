@@ -8,8 +8,15 @@ export default class API {
         return res.json();
     }
 
+    static async getUserByEmail(email: String) {
+        const res = await fetch(`http://localhost:3000/users/${email}`);
+        if (!res.ok) throw new Error("Failed to fetch users");
+        return res.json();
+    }
+
     static async registerUser(user: { name: string; email: string; password: string; gender: string; age: string; user_type: string; }) {
         // El email ya viene en el objeto user, no hay que cambiar nada aquí
+
         const res = await fetch("http://localhost:3000/users/register", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -21,9 +28,23 @@ export default class API {
         return res.json();
     }
 
+
+    static async updateAndVerifyPassword(email: string, currentPassword: string, password: string) {
+        const res = await fetch(`http://localhost:3000/users/updatePass/${email}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ currentPassword, newPassword: password })
+        });
+
+        if (!res.ok) throw new Error("failed to updatePass");
+
+        return res.json();
+    }
+    
     static async deleteUser(user: { email: string }) {
         // Recibe un objeto usuario y extrae el email
         const res = await fetch(`http://localhost:3000/users/delete/${user.email}`, {
+
             method: "DELETE",
         });
         if (!res.ok) {
@@ -32,9 +53,9 @@ export default class API {
         return await res.json();
     }
 
-    static async updateUser(user: { email: string; name: string; gender: string; age: string; user_type: string; }) {
-        // Recibe un objeto usuario y usa el email en la URL
-        const res = await fetch(`http://localhost:3000/users/updateUser/${user.email}`, {
+    static async updateUser(email: string, data: { name: string; username: string; gender: string; age: string; user_type: string; }) {
+        const res = await fetch(`http://localhost:3000/users/updateUser/${email}`, {
+
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(user),
@@ -88,7 +109,7 @@ export default class API {
         const res = await fetch(`http://localhost:3000/exercise/register`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(exercise), 
+            body: JSON.stringify(exercise),
         });
 
         if (!res.ok) throw new Error("Failed to register exercise");
@@ -167,5 +188,32 @@ export default class API {
         if (!res.ok) throw new Error("Failed to update gym");
         return res.json();
     }
+    //gym
+    static async getGyms() {
+        const res = await fetch(`http://localhost:3000/gym/`, { method: "GET" })
 
+        if (!res.ok) throw new Error("Failed to get gyms");
+
+        return res.json();
+    }
+
+    static async getActualGym(email: string) {
+        const res = await fetch(`http://localhost:3000/users/goes_at/${email}`, { method: "GET" })
+
+        if (!res.ok) throw new Error("Failed to get gyms");
+
+        return res.json();
+    }
+
+    static async changeGym(email: string, data: { name: string; }) {
+        const res = await fetch(`http://localhost:3000/users/changeGym/${email}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+        })
+
+        if (!res.ok) throw new Error("Failed to get gyms");
+
+        return res.json();
+    }
 }
