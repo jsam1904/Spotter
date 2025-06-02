@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Heart, ChevronLeft, ChevronRight, Dumbbell } from "lucide-react"
 import { Navbar } from "@/components/ui/Navbar"
 import LoadingSpinner from "@/components/loading-spinner"
-import LogoutButton from "@/components/LogoutButton"
+import LogoutButton from "@/components/logoutButton"
 
 interface Exercise {
   img: string

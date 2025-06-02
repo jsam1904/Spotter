@@ -14,10 +14,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { Camera, User, Bell, Shield, LogOut, Sun, Moon, Menu } from "lucide-react"
 import { DarkModeToggle } from "../../components/ui/DarkModeToggle"
 import API from "@/lib/api"
-import Swal from "sweetalert2";
+import Swal from "sweetalert2"
 import { Navbar } from "../../components/ui/Navbar"
 import LoadingSpinner from "../../components/loading-spinner"
-
 
 export default function ProfileSettings() {
   const [profileImage, setProfileImage] = useState("https://via.placeholder.com/150?text=User")
@@ -34,61 +33,118 @@ export default function ProfileSettings() {
     about_pics: [],
     bio: "",
     gym: ""
-  });
+  })
   const [originalUserData, setOriginalUserData] = useState(userData)
   const [gyms, setGyms] = useState<{ id: string; name: string }[]>([])
-  const [actualGym, setActualGym] = useState({ name: "" });
+  const [actualGym, setActualGym] = useState({ name: "" })
   const [originalGym, setOriginalGym] = useState(actualGym)
-  const [currentPassword, setCurrentPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [currentPassword, setCurrentPassword] = useState("")
+  const [newPassword, setNewPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
 
   const getUserEmail = () => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token")
     if (token) {
       try {
-        const payload = JSON.parse(atob(token.split(".")[1]));
-        return payload.email;
+        const payload = JSON.parse(atob(token.split(".")[1]))
+        return payload.email
       } catch (e) {
-        console.error("Error decoding token:", e);
-        return null;
+        console.error("Error decoding token:", e)
+        return null
       }
     }
-    return null;
-  };
+    return null
+  }
 
   const handleChangePassword = async () => {
     if (!currentPassword || !newPassword || !confirmPassword) {
-      Swal.fire("Campos vacíos", "Por favor, llena todos los campos.", "warning");
-      return;
+      Swal.fire("Campos vacíos", "Por favor, llena todos los campos.", "warning")
+      return
     }
 
     if (newPassword !== confirmPassword) {
-      Swal.fire("Error", "Las nuevas contraseñas no coinciden.", "error");
-      return;
+      Swal.fire("Error", "Las nuevas contraseñas no coinciden.", "error")
+      return
     }
 
     try {
-      const res = await API.updateAndVerifyPassword(userData.email, currentPassword, newPassword);
+      const res = await API.updateAndVerifyPassword(userData.email, currentPassword, newPassword)
 
       if (res.success) {
-        Swal.fire("Éxito", res.message, "success");
-        setCurrentPassword("");
-        setNewPassword("");
-        setConfirmPassword("");
+        Swal.fire("Éxito", res.message, "success")
+        setCurrentPassword("")
+        setNewPassword("")
+        setConfirmPassword("")
       } else {
-        Swal.fire("Error", res.message || "No se pudo cambiar la contraseña", "error");
+        Swal.fire("Error", res.message || "No se pudo cambiar la contraseña", "error")
       }
     } catch (err) {
-      console.error("Error en handleChangePassword:", err);
-      Swal.fire(
-        "Error",
-        "Contraseña actual incorrecta.",
-        "error"
-      );
+      console.error("Error en handleChangePassword:", err)
+      Swal.fire("Error", "Contraseña actual incorrecta.", "error")
     }
-  };
+  }
 
+  const handleProfilePicUpload = async (file: File) => {
+    const email = getUserEmail()
+    if (!email) {
+      Swal.fire("Error", "No se pudo obtener el correo del usuario.", "error")
+      return
+    }
+
+    const formData = new FormData()
+    formData.append("image", file)
+
+    try {
+      const response = await fetch(`http://localhost:3000/users/add-prof-pic/${email}`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: formData,
+      })
+
+      const result = await response.json()
+      if (response.ok) {
+        setUserData((prev) => ({ ...prev, prof_pic: result.prof_pic }))
+        setProfileImage(result.prof_pic)
+        Swal.fire("Éxito", "Foto de perfil actualizada correctamente.", "success")
+      } else {
+        Swal.fire("Error", result.error || "No se pudo actualizar la foto de perfil.", "error")
+      }
+    } catch (error) {
+      console.error("Error uploading profile picture:", error)
+      Swal.fire("Error", "Error al subir la foto de perfil.", "error")
+    }
+  }
+
+  const handleAboutPicsUpload = async (files: FileList) => {
+    const email = getUserEmail()
+    if (!email) {
+      Swal.fire("Error", "No se pudo obtener el correo del usuario.", "error")
+      return
+    }
+
+    const formData = new FormData()
+    Array.from(files).forEach((file) => formData.append("images", file))
+
+    try {
+      const response = await fetch(`http://localhost:3000/users/add-about-pics/${email}`, {
+        method: "POST",
+        body: formData,
+      })
+
+      const result = await response.json()
+      if (response.ok) {
+        setUserData((prev) => ({ ...prev, about_pics: result.about_pics }))
+        Swal.fire("Éxito", "Imágenes adicionales subidas correctamente.", "success")
+      } else {
+        Swal.fire("Error", result.error || "No se pudieron subir las imágenes adicionales.", "error")
+      }
+    } catch (error) {
+      console.error("Error uploading about pictures:", error)
+      Swal.fire("Error", "Error al subir las imágenes adicionales.", "error")
+    }
+  }
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -134,6 +190,8 @@ export default function ProfileSettings() {
           email: res[0].email || "",
           gym: ""
         })
+
+        setProfileImage(res[0].prof_pic || "https://via.placeholder.com/150?text=User")
       } catch (error) {
         console.error("Error al obtener datos de usuario:", error)
       }
@@ -168,7 +226,7 @@ export default function ProfileSettings() {
 
         setUserData((prev) => ({
           ...prev,
-          gym: res[0].name // usa el id para el <Select>
+          gym: res[0].name
         }))
 
         setActualGym({
@@ -179,14 +237,12 @@ export default function ProfileSettings() {
       }
     }
 
-
     fetchActualGym()
     fetchGyms()
     fetchUserData()
   }, [])
 
-  const [loading, setLoading] = useState(true);
-
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     console.log(userData)
@@ -196,7 +252,6 @@ export default function ProfileSettings() {
       document.documentElement.classList.add("dark")
     }
 
-    // Simula carga de datos
     const timer = setTimeout(() => setLoading(false), 1000)
     return () => clearTimeout(timer)
   }, [])
@@ -216,6 +271,7 @@ export default function ProfileSettings() {
   const handleCancel = () => {
     setUserData(originalUserData)
     setActualGym(originalGym)
+    setProfileImage(originalUserData.prof_pic || "https://via.placeholder.com/150?text=User")
 
     Swal.fire({
       icon: "info",
@@ -224,7 +280,6 @@ export default function ProfileSettings() {
       confirmButtonColor: "#ef4444"
     })
   }
-
 
   const handleSave = async () => {
     try {
@@ -258,14 +313,13 @@ export default function ProfileSettings() {
     { href: "/Psettings", label: "Perfil" },
   ]
 
-
-    if (loading) {
-      return (
-        <div>
-          <LoadingSpinner />
-        </div>
-      );
-    }
+  if (loading) {
+    return (
+      <div>
+        <LoadingSpinner />
+      </div>
+    )
+  }
 
   return (
     <div
@@ -304,7 +358,7 @@ export default function ProfileSettings() {
                   <div className="flex flex-col sm:flex-row gap-6 items-center sm:items-start">
                     <div className="relative">
                       <img
-                        src={userData.prof_pic || "/placeholder.svg"}
+                        src={profileImage}
                         alt="Foto de perfil"
                         className="w-24 h-24 rounded-full object-cover"
                       />
@@ -322,13 +376,7 @@ export default function ProfileSettings() {
                         onChange={(e) => {
                           const file = e.target.files?.[0]
                           if (file) {
-                            const reader = new FileReader()
-                            reader.onload = (e) => {
-                              if (e.target?.result) {
-                                setProfileImage(e.target.result as string)
-                              }
-                            }
-                            reader.readAsDataURL(file)
+                            handleProfilePicUpload(file)
                           }
                         }}
                       />
@@ -345,7 +393,10 @@ export default function ProfileSettings() {
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => setProfileImage(userData.prof_pic)}
+                          onClick={() => {
+                            setProfileImage("https://via.placeholder.com/150?text=User")
+                            setUserData((prev) => ({ ...prev, prof_pic: "" }))
+                          }}
                         >
                           Eliminar
                         </Button>
@@ -353,37 +404,102 @@ export default function ProfileSettings() {
                     </div>
                   </div>
 
+                  <div className="space-y-4">
+                    <h3 className="font-medium">Fotos Adicionales</h3>
+                    <p className="text-sm text-muted-foreground">Agrega hasta 5 fotos para mostrar más sobre ti. JPG, GIF o PNG. Máximo 2MB cada una.</p>
+                    <div className="flex flex-wrap gap-4">
+                      {userData.about_pics.map((pic, index) => (
+                        <div key={index} className="relative">
+                          <img
+                            src={pic}
+                            alt={`Foto adicional ${index + 1}`}
+                            className="w-24 h-24 rounded-md object-cover"
+                          />
+                          <button
+                            className="absolute top-0 right-0 bg-rose-600 text-white p-1 rounded-full"
+                            onClick={() => {
+                              setUserData((prev) => ({
+                                ...prev,
+                                about_pics: prev.about_pics.filter((_, i) => i !== index)
+                              }))
+                            }}
+                          >
+                            X
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="flex gap-2">
+                      <input
+                        id="about-pics"
+                        type="file"
+                        className="hidden"
+                        accept="image/*"
+                        multiple
+                        onChange={(e) => {
+                          const files = e.target.files
+                          if (files && files.length > 0) {
+                            if (userData.about_pics.length + files.length > 5) {
+                              Swal.fire("Límite excedido", "Solo puedes subir hasta 5 fotos adicionales.", "warning")
+                              return
+                            }
+                            handleAboutPicsUpload(files)
+                          }
+                        }}
+                      />
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => document.getElementById("about-pics")?.click()}
+                      >
+                        Agregar Fotos
+                      </Button>
+                    </div>
+                  </div>
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="name">Nombre</Label>
                       <Input
+                        id="name"
                         type="text"
                         value={userData.name}
                         onChange={(e) => setUserData((prev) => ({ ...prev, name: e.target.value }))}
                         className="input"
                       />
-
-
-
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="username">Nombre de usuario</Label>
-                      <Input id="username" value={userData?.username} onChange={(e) => setUserData((prev) => ({ ...prev, username: e.target.value }))} />
+                      <Input
+                        id="username"
+                        value={userData?.username}
+                        onChange={(e) => setUserData((prev) => ({ ...prev, username: e.target.value }))}
+                      />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="email">Email</Label>
-                      <Input id="email" type="email" value={userData?.email} onChange={(e) => setUserData((prev) => ({ ...prev, email: e.target.value }))} />
+                      <Input
+                        id="email"
+                        type="email"
+                        value={userData?.email}
+                        onChange={(e) => setUserData((prev) => ({ ...prev, email: e.target.value }))}
+                      />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="phone">Edad</Label>
-                      <Input id="age" value={userData?.age} onChange={(e) => setUserData((prev) => ({ ...prev, age: e.target.value }))} />
+                      <Label htmlFor="age">Edad</Label>
+                      <Input
+                        id="age"
+                        value={userData?.age}
+                        onChange={(e) => setUserData((prev) => ({ ...prev, age: e.target.value }))}
+                      />
                     </div>
                     <div className="space-y-2 md:col-span-2">
                       <Label htmlFor="bio">Biografía</Label>
                       <Textarea
                         id="bio"
                         placeholder="Cuéntanos sobre ti..."
-                        value={userData?.bio} onChange={(e) => setUserData((prev) => ({ ...prev, bio: e.target.value }))}
+                        value={userData?.bio}
+                        onChange={(e) => setUserData((prev) => ({ ...prev, bio: e.target.value }))}
                         className="min-h-[100px] resize-y"
                       />
                       <p className="text-xs text-muted-foreground">
@@ -395,9 +511,8 @@ export default function ProfileSettings() {
                   <div className="space-y-4">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="experience">Ubicación</Label>
+                        <Label htmlFor="gym">Ubicación</Label>
                         <p>Gimnasio seleccionado: {userData.gym}</p>
-
                         <Select
                           value={userData.gym}
                           onValueChange={(value) =>
@@ -415,12 +530,7 @@ export default function ProfileSettings() {
                             ))}
                           </SelectContent>
                         </Select>
-
-
-
-
                       </div>
-
                     </div>
                   </div>
                 </CardContent>
@@ -430,7 +540,6 @@ export default function ProfileSettings() {
                   </Button>
                   <Button className="bg-rose-600 hover:bg-rose-700 w-full sm:w-auto mt-2 sm:mt-0" onClick={handleSave}>
                     Guardar cambios
-
                   </Button>
                 </CardFooter>
               </Card>
@@ -476,7 +585,6 @@ export default function ProfileSettings() {
                     </div>
                   </div>
                 </CardContent>
-
                 <CardFooter className="flex flex-col sm:flex-row justify-end gap-2 pt-4">
                   <Button className="bg-rose-600 hover:bg-rose-700 w-full sm:w-auto mt-2 sm:mt-0" onClick={handleChangePassword}>
                     Cambiar contraseña
