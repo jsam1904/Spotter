@@ -203,29 +203,27 @@ export default function ChatPage() {
             {matches.map((match) => (
               <li
                 key={match.email}
-                className={`p-2 rounded cursor-pointer ${
+                className={`p-2 rounded cursor-pointer flex items-center gap-3 ${
                   selectedMatch === match.email ? 'bg-[#e6790c] text-white' : 'hover:bg-gray-200'
                 }`}
                 onClick={() => handleSelectMatch(match.email)}
               >
-                <div className="flex items-center space-x-2">
-                  {match.prof_pic ? (
-                    <img
-                      src={match.prof_pic}
-                      alt={match.username}
-                      className="w-8 h-8 rounded-full object-cover"
-                    />
-                  ) : (
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center ${isDarkMode ? 'bg-gray-700 text-gray-200' : 'bg-gray-300 text-gray-600'}`}>
-                      {match.username && match.username.length > 0
-                        ? match.username[0].toUpperCase()
-                        : '?'}
-                    </div>
-                  )}
-                  <div>
-                    <p className={`font-medium ${isDarkMode ? 'text-gray-100' : ''}`}>{match.username}</p>
-                    <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>{match.email}</p>
+                {match.prof_pic ? (
+                  <img
+                    src={match.prof_pic}
+                    alt={match.username}
+                    className="w-14 h-14 rounded-full object-cover border-2 border-[#e6790c] flex-shrink-0"
+                  />
+                ) : (
+                  <div className={`w-14 h-14 rounded-full flex items-center justify-center text-xl font-bold flex-shrink-0 ${isDarkMode ? 'bg-gray-700 text-gray-200' : 'bg-gray-300 text-gray-600'}`}>
+                    {match.username && match.username.length > 0
+                      ? match.username[0].toUpperCase()
+                      : '?'}
                   </div>
+                )}
+                <div className="flex flex-col min-w-0">
+                  <p className={`font-medium truncate ${isDarkMode ? 'text-gray-100' : ''}`}>{match.username}</p>
+                  <p className={`text-sm truncate max-w-[120px] ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>{match.email}</p>
                 </div>
               </li>
             ))}

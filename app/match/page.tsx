@@ -123,11 +123,18 @@ export default function FindMatches() {
     }
   };
 
+  // Helper para obtener el array de imágenes de un usuario
+  const getUserImages = (user: User) => {
+    // Evita duplicar prof_pic si ya está en about_pics
+    const aboutPicsFiltered = user.about_pics.filter(pic => pic !== user.prof_pic);
+    return [user.prof_pic, ...aboutPicsFiltered];
+  };
+
   // Handle image cycling
   const handleImageClick = (userIndex: number) => {
     setCurrentImageIndices((prev) => {
       const newIndices = [...prev];
-      const userImages = matches[userIndex].about_pics.length > 0 ? matches[userIndex].about_pics : [matches[userIndex].prof_pic];
+      const userImages = getUserImages(matches[userIndex]);
       newIndices[userIndex] = (newIndices[userIndex] + 1) % userImages.length;
       return newIndices;
     });
@@ -355,10 +362,7 @@ export default function FindMatches() {
                         <div className="relative h-full">
                           <img
                             src={
-                              matches[currentIndex - 1].about_pics.length > 0
-                                ? matches[currentIndex - 1].about_pics[currentImageIndices[currentIndex - 1]] ||
-                                  matches[currentIndex - 1].prof_pic
-                                : matches[currentIndex - 1].prof_pic || "/placeholder.svg"
+                              matches[currentIndex - 1].prof_pic || "/placeholder.svg"
                             }
                             alt="Perfil anterior"
                             className="h-full w-full object-cover"
@@ -381,10 +385,7 @@ export default function FindMatches() {
                         <div className="relative h-full">
                           <img
                             src={
-                              matches[currentIndex + 1].about_pics.length > 0
-                                ? matches[currentIndex + 1].about_pics[currentImageIndices[currentIndex + 1]] ||
-                                  matches[currentIndex + 1].prof_pic
-                                : matches[currentIndex + 1].prof_pic || "/placeholder.svg"
+                              matches[currentIndex + 1].prof_pic || "/placeholder.svg"
                             }
                             alt="Perfil siguiente"
                             className="h-full w-full object-cover"
@@ -407,15 +408,17 @@ export default function FindMatches() {
                       <div className="relative h-full w-full">
                         <img
                           src={
-                            matches[currentIndex].about_pics.length > 0
-                              ? matches[currentIndex].about_pics[currentImageIndices[currentIndex]] ||
-                                matches[currentIndex].prof_pic
-                              : matches[currentIndex].prof_pic || "/placeholder.svg"
+                            getUserImages(matches[currentIndex])[currentImageIndices[currentIndex]] ||
+                            "/placeholder.svg"
                           }
                           alt={matches[currentIndex].name}
                           className="object-cover w-full h-full cursor-pointer"
                           onClick={() => handleImageClick(currentIndex)}
                         />
+                        {/* Indicador de imágenes */}
+                        <div className="absolute top-2 right-2 bg-black/60 text-white text-xs px-2 py-1 rounded-full z-20">
+                          {currentImageIndices[currentIndex] + 1} / {getUserImages(matches[currentIndex]).length}
+                        </div>
                         <motion.div
                           className="absolute top-4 sm:top-8 left-4 sm:left-8 rounded-full border-4 border-green-500 bg-white/80 p-1 sm:p-2"
                           style={{ opacity: likeOpacity, scale: likeOpacity }}

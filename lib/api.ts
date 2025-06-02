@@ -14,17 +14,14 @@ export default class API {
         return res.json();
     }
 
-    static async registerUser(user: { name: string; email: string; password: string; gender: string; age: string; user_type: string; }) {
-        // El email ya viene en el objeto user, no hay que cambiar nada aquí
-
+    static async registerUser(user: { name: string; username: string; email: string; password: string; gender: string; age: string; user_type: string; }) {
         const res = await fetch("http://localhost:3000/users/register", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(user),
         });
 
-        if (!res.ok) throw new Error("Failed to register user");
-
+        if (!res.ok) throw new Error("Error en el registro");
         return res.json();
     }
 
@@ -53,18 +50,29 @@ export default class API {
         return await res.json();
     }
 
-    static async updateUser(email: string, data: { name: string; username: string; gender: string; age: string; user_type: string; }) {
+    static async updateUser(email: string, data: {
+        name: string;
+        username: string;
+        email: string;
+        gender: string;
+        age: string;
+        user_type: string;
+        prof_pic: string;
+        about_pics: string[];
+        bio: string;
+        gym: string;
+    }) {
         const res = await fetch(`http://localhost:3000/users/updateUser/${email}`, {
-
             method: "PUT",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(user),
+            body: JSON.stringify(data),
         });
         if (!res.ok) {
             throw new Error("Error al actualizar usuario");
         }
         return await res.json();
     }
+    
 
     //Preferences
     static async registerPreference(name: string) {
@@ -143,12 +151,6 @@ export default class API {
     }
 
     // Gyms
-    static async getGyms() {
-        const res = await fetch(`http://localhost:3000/gym`, { method: "GET" });
-        if (!res.ok) throw new Error("Failed to fetch gyms");
-        return res.json();
-    }
-
     static async getVerifiedGyms() {
         const res = await fetch(`http://localhost:3000/gym/verified`, { method: "GET" });
         if (!res.ok) throw new Error("Failed to fetch verified gyms");
@@ -186,14 +188,6 @@ export default class API {
             body: JSON.stringify(data),
         });
         if (!res.ok) throw new Error("Failed to update gym");
-        return res.json();
-    }
-    //gym
-    static async getGyms() {
-        const res = await fetch(`http://localhost:3000/gym/`, { method: "GET" })
-
-        if (!res.ok) throw new Error("Failed to get gyms");
-
         return res.json();
     }
 

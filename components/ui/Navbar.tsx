@@ -5,7 +5,7 @@ import { Menu } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { DarkModeToggle } from "@/components/ui/DarkModeToggle"
 import { ReactNode, useState } from "react"
-import LogoutButton from "../LogoutButton"
+import LogoutButton from "../logoutButton"
 
 interface NavLink {
   href: string
