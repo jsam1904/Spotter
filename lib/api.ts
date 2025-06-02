@@ -40,7 +40,7 @@ export default class API {
 
         return res.json();
     }
-    
+
     static async deleteUser(user: { email: string }) {
         // Recibe un objeto usuario y extrae el email
         const res = await fetch(`http://localhost:3000/users/delete/${user.email}`, {
@@ -65,7 +65,21 @@ export default class API {
         }
         return await res.json();
     }
-    
+
+    static async updateUserPreferences(email: string, preferences: string[]) {
+        const res = await fetch(`http://localhost:3000/users/updatePreferences/${email}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ preferences }),
+        });
+
+        if (!res.ok) {
+            throw new Error("Error al actualizar preferencias");
+        }
+
+        return await res.json();
+    }
+
 
     //Preferences
     static async registerPreference(name: string) {

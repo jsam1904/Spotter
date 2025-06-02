@@ -10,6 +10,10 @@ import { Heart, ChevronLeft, ChevronRight, Dumbbell } from "lucide-react"
 import { Navbar } from "@/components/ui/Navbar"
 import LoadingSpinner from "@/components/loading-spinner"
 import LogoutButton from "@/components/LogoutButton"
+import { Dialog } from "@headlessui/react";
+import { Check, Settings } from "lucide-react";
+import API from "@/lib/api"
+import Swal from "sweetalert2";
 
 interface Exercise {
   img: string
@@ -17,12 +21,28 @@ interface Exercise {
   description: string
 }
 
+const preferencesList = [
+  "Notificaciones por correo",
+  "Modo oscuro",
+  "Recordatorios diarios",
+  "Actualizaciones del sistema",
+  "Ofertas personalizadas",
+];
+type Preference = {
+  id: string;
+  name: string;
+};
+
 export default function ExerciseRecommendations() {
   const [isDarkMode, setIsDarkMode] = useState(false)
   const [currentExercise, setCurrentExercise] = useState(0)
   const [savedExercises, setSavedExercises] = useState<number[]>([])
   const [exercises, setExercises] = useState<Exercise[]>([])
   const [loading, setLoading] = useState(true)
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedPrefs, setSelectedPrefs] = useState<string[]>([]);
+  const [preferencesList, setPreferencesList] = useState<string[]>([]);
+  const [preferences, setPreferences] = useState<Preference[]>([]);
 
   // Obtener email del token
   const getEmailFromToken = () => {
@@ -36,32 +56,77 @@ export default function ExerciseRecommendations() {
     }
   }
 
-  useEffect(() => {
-    const fetchExercises = async () => {
-      setLoading(true)
-      const email = getEmailFromToken()
-      if (!email) {
-        setExercises([])
-        setLoading(false)
-        return
-      }
-      try {
-        const res = await axios.get(`http://localhost:3000/users/${email}/recommendations`)
-        setExercises(res.data.exercises || [])
-      } catch {
-        setExercises([])
-      }
+  const togglePreference = (pref: string) => {
+    setSelectedPrefs(prev =>
+      prev.includes(pref) ? prev.filter(p => p !== pref) : [...prev, pref]
+    );
+  };
+
+  const fetchExercises = async () => {
+    setLoading(true)
+    const email = getEmailFromToken()
+    if (!email) {
+      setExercises([])
       setLoading(false)
+      return
     }
+    try {
+      const res = await axios.get(`http://localhost:3000/users/${email}/recommendations`)
+      setExercises(res.data.exercises || [])
+    } catch {
+      setExercises([])
+    }
+    setLoading(false)
+  }
+  useEffect(() => {
+
     fetchExercises()
   }, [])
+
+  useEffect(() => {
+    if (isOpen) {
+      API.getPreferences()
+        .then((prefs: Preference[]) => {
+          setPreferences(prefs);
+          setSelectedPrefs([]); // opcional
+        })
+        .catch((err) => console.error("Error al cargar preferencias:", err));
+    }
+  }, [isOpen]);
+
 
   const links = [
     { href: "/UserPage", label: "Inicio" },
     { href: "/match", label: "Match" },
     { href: "/Psettings", label: "Perfil" },
   ]
-  
+
+  const handleSave = async () => {
+    const email = getEmailFromToken();
+    if (!email) {
+      Swal.fire("Error", "No se pudo obtener el email del token", "error");
+      return;
+    }
+
+    try {
+      const res = await API.updateUserPreferences(email, selectedPrefs);
+      console.log("Respuesta:", res);
+
+      if (res.status < 200 || res.status >= 300) {
+        throw new Error("Respuesta no exitosa");
+      }
+
+
+      Swal.fire("Éxito", "Preferencias guardadas correctamente", "success");
+      setIsOpen(false);
+      fetchExercises();
+    } catch (err) {
+      console.error("Error al guardar preferencias:", err);
+      Swal.fire("Error", "No se pudieron guardar las preferencias", "error");
+    }
+  };
+
+
 
 
   const nextExercise = () => {
@@ -89,12 +154,20 @@ export default function ExerciseRecommendations() {
   }
 
   return (
+
     <div className={`flex min-h-screen flex-col transition duration-700 ease-in-out ${isDarkMode ? "bg-[#222b4b] text-white" : "bg-white text-black"}`}>
       <Navbar isDarkMode={isDarkMode} toggleDarkMode={() => setIsDarkMode(!isDarkMode)} links={links} />
       <main className="flex-1 container py-8">
         <div className="space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <h2 className="text-2xl font-bold">Ejercicios Recomendados</h2>
+            {/* Botón flotante */}
+            <Button
+              className="fixed bottom-4 right-4 rounded-full shadow-lg p-3 bg-blue-600 hover:bg-blue-700"
+              onClick={() => setIsOpen(true)}
+            >Editar mis preferencias
+              <Settings className="w-5 h-5 text-white" />
+            </Button>
           </div>
 
           <Tabs defaultValue="discover" className="w-full">
@@ -192,8 +265,45 @@ export default function ExerciseRecommendations() {
               )}
             </TabsContent>
           </Tabs>
+          {/* Modal */}
+          <Dialog open={isOpen} onClose={() => setIsOpen(false)} className="fixed z-50 inset-0">
+            <div className="flex items-center justify-center min-h-screen bg-black bg-opacity-40">
+              <Dialog.Panel className="bg-white dark:bg-gray-900 p-6 rounded-2xl shadow-xl w-full max-w-md">
+                <Dialog.Title className="text-xl font-bold mb-4">Selecciona tus preferencias</Dialog.Title>
+                <div className="space-y-3 mb-4 max-h-60 overflow-y-auto">
+                  {preferences.map((pref) => (
+                    <label key={pref.id} className="block">
+                      <input
+                        type="checkbox"
+                        value={pref.name}
+                        checked={selectedPrefs.includes(pref.name)}
+                        onChange={(e) =>
+                          setSelectedPrefs(prev =>
+                            e.target.checked
+                              ? [...prev, pref.name]
+                              : prev.filter(p => p !== pref.name)
+                          )
+                        }
+                      />{" "}
+                      {pref.name}
+                    </label>
+                  ))}
+
+
+                </div>
+                <div className="flex justify-end space-x-2">
+                  <Button variant="outline" onClick={() => setIsOpen(false)}>Cancelar</Button>
+                  <Button onClick={handleSave}>
+                    <Check className="w-4 h-4 mr-1" />
+                    Guardar preferencias
+                  </Button>
+                </div>
+              </Dialog.Panel>
+            </div>
+          </Dialog>
         </div>
       </main>
     </div>
   )
 }
+
