@@ -160,7 +160,7 @@ export default function UsersPage() {
             </tr>
           ) : (
             paginatedUsers.map((user) => (
-              <tr key={user.id} className="hover:bg-gray-50">
+              <tr key={user.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                 <td className="border border-gray-300 px-4 py-2">
                   {user.prof_pic ? (
                     <img
@@ -183,14 +183,14 @@ export default function UsersPage() {
                 <td className="border border-gray-300 px-4 py-2 space-x-2 flex">
                   <button
                     onClick={() => openEditModal(user)}
-                    className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                    className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 transition-colors"
                     title="Editar"
                   >
                     <Pencil size={18} />
                   </button>
                   <button
                     onClick={() => handleDelete(user.email)}
-                    className="p-2 bg-red-500 text-white rounded hover:bg-red-600"
+                    className="p-2 bg-red-500 text-white rounded hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700 transition-colors"
                     title="Eliminar"
                   >
                     <Trash2 size={18} />
@@ -211,7 +211,7 @@ export default function UsersPage() {
         <button
           onClick={() => goToPage(currentPage - 1)}
           disabled={currentPage === 1}
-          className="px-3 py-1 border rounded disabled:opacity-50"
+          className="px-3 py-1 border rounded disabled:opacity-50 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
         >
           Anterior
         </button>
@@ -219,8 +219,9 @@ export default function UsersPage() {
           <button
             key={i}
             onClick={() => goToPage(i + 1)}
-            className={`px-3 py-1 border rounded ${currentPage === i + 1 ? "bg-blue-500 text-white" : ""
-              }`}
+            className={`px-3 py-1 border rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${
+              currentPage === i + 1 ? "bg-blue-500 text-white dark:bg-blue-600" : ""
+            }`}
           >
             {i + 1}
           </button>
@@ -228,10 +229,9 @@ export default function UsersPage() {
         <button
           onClick={() => goToPage(currentPage + 1)}
           disabled={currentPage === totalPages}
-          className="px-3 py-1 border rounded disabled:opacity-50"
+          className="px-3 py-1 border rounded disabled:opacity-50 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
         >
           Siguiente
-
         </button>
       </div>
     </div>
