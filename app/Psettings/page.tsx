@@ -45,13 +45,13 @@ export default function ProfileSettings() {
     }
   }
 
-  // Links para la navbar
   const links = [
     { href: "/UserPage", label: "Inicio" },
     { href: "/match", label: "Match" },
     { href: "/recomendation", label: "Recomendaciones" },
     { href: "/Psettings", label: "Perfil" },
   ]
+
 
     if (loading) {
       return (

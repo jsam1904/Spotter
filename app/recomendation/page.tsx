@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Heart, ChevronLeft, ChevronRight, Dumbbell } from "lucide-react"
 import { Navbar } from "@/components/ui/Navbar"
 import LoadingSpinner from "@/components/loading-spinner"
+import LogoutButton from "@/components/LogoutButton"
 
 interface Exercise {
   img: string
@@ -60,6 +61,8 @@ export default function ExerciseRecommendations() {
     { href: "/match", label: "Match" },
     { href: "/Psettings", label: "Perfil" },
   ]
+  
+
 
   const nextExercise = () => {
     if (currentExercise < exercises.length - 1) setCurrentExercise(currentExercise + 1)

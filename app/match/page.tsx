@@ -12,7 +12,7 @@ import { motion, type PanInfo, useMotionValue, useTransform } from "framer-motio
 import axios from "axios";
 import Swal from "sweetalert2";
 import { DarkModeToggle } from "../../components/ui/DarkModeToggle";
-import { Navbar } from "../../components/ui/Navbar"; // <-- Importa tu Navbar
+import { Navbar } from "../../components/ui/Navbar"; 
 import LoadingSpinner from "../../components/loading-spinner";
 
 // Define TypeScript interface for user data
@@ -248,15 +248,17 @@ export default function FindMatches() {
 
   // Botón de filtros como acción personalizada
   const actions = (
-    <Button
-      variant="outline"
-      size="sm"
-      onClick={() => setFiltersOpen(!filtersOpen)}
-      className={isDarkMode ? "bg-gray-700 text-white" : "bg-gray-200 text-black"}
-    >
-      <Filter className="h-4 w-4 mr-2" />
-      Filtros
-    </Button>
+    <>
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => setFiltersOpen(!filtersOpen)}
+        className={isDarkMode ? "bg-gray-700 text-white" : "bg-gray-200 text-black"}
+      >
+        <Filter className="h-4 w-4 mr-2" />
+        Filtros
+      </Button>
+    </>
   );
 
   useEffect(() => {

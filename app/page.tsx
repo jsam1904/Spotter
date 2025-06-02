@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ArrowRight, Dumbbell, Users, Search, Menu, Sun, Moon, Calendar } from "lucide-react"
 import { DarkModeToggle } from "@/components/ui/DarkModeToggle"
-import { Navbar } from "@/components/ui/Navbar" // <-- Importa tu Navbar
+import { Navbar } from "@/components/ui/Navbar"
 
 export default function LandingPage() {
   const [isDarkMode, setIsDarkMode] = useState(false)
@@ -41,7 +41,6 @@ export default function LandingPage() {
     { href: "#vision", label: "Visión y Misión" },
   ]
 
-  // Botones de acciones para la navbar
   const actions = (
     <>
       <Link href="/login">
@@ -72,6 +71,7 @@ export default function LandingPage() {
         toggleDarkMode={toggleDarkMode}
         links={links}
         actions={actions}
+        showLogoutButton={false}
       />
       <main className="flex-1">
         <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48">

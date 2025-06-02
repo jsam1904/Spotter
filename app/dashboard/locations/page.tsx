@@ -144,7 +144,7 @@ export default function GymsPage() {
                         </tr>
                     ) : (
                         paginatedGyms.map((gym) => (
-                            <tr key={gym.gymId} className="hover:bg-gray-50">
+                            <tr key={gym.gymId} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                                 <td className="border border-gray-300 px-4 py-2">{gym.name}</td>
                                 <td className="border border-gray-300 px-4 py-2">{gym.description}</td>
                                 <td className="border border-gray-300 px-4 py-2">
@@ -177,7 +177,7 @@ export default function GymsPage() {
                                                     });
                                                 }
                                             }}
-                                            className="px-2 py-1 bg-green-500 text-white rounded hover:bg-green-600"
+                                            className="px-2 py-1 bg-green-500 text-white rounded hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700 transition-colors"
                                         >
                                             Verificar
                                         </button>
@@ -186,14 +186,14 @@ export default function GymsPage() {
                                 <td className="border border-gray-300 px-4 py-2 space-x-2">
                                     <button
                                         onClick={() => openEditModal(gym)}
-                                        className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                                        className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 transition-colors"
                                         title="Editar"
                                     >
                                         <Pencil size={18} />
                                     </button>
                                     <button
                                         onClick={() => handleDelete(gym)}
-                                        className="p-2 bg-red-500 text-white rounded hover:bg-red-600"
+                                        className="p-2 bg-red-500 text-white rounded hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700 transition-colors"
                                         title="Eliminar"
                                     >
                                         <Trash2 size={18} />
@@ -214,7 +214,7 @@ export default function GymsPage() {
                 <button
                     onClick={() => goToPage(currentPage - 1)}
                     disabled={currentPage === 1}
-                    className="px-3 py-1 border rounded disabled:opacity-50"
+                    className="px-3 py-1 border rounded disabled:opacity-50 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                 >
                     Anterior
                 </button>
@@ -222,8 +222,7 @@ export default function GymsPage() {
                     <button
                         key={i}
                         onClick={() => goToPage(i + 1)}
-                        className={`px-3 py-1 border rounded ${currentPage === i + 1 ? "bg-blue-500 text-white" : ""
-                            }`}
+                        className={`px-3 py-1 border rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${currentPage === i + 1 ? "bg-blue-500 text-white dark:bg-blue-600" : ""}`}
                     >
                         {i + 1}
                     </button>
@@ -231,7 +230,7 @@ export default function GymsPage() {
                 <button
                     onClick={() => goToPage(currentPage + 1)}
                     disabled={currentPage === totalPages}
-                    className="px-3 py-1 border rounded disabled:opacity-50"
+                    className="px-3 py-1 border rounded disabled:opacity-50 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                 >
                     Siguiente
                 </button>

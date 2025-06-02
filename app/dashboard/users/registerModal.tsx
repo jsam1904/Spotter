@@ -28,7 +28,7 @@ export default function RegisterModal({ isOpen, onClose, onSuccess }: RegisterMo
         e.preventDefault();
 
         try {
-            await API.registerUser({ name, username, password, email, gender, age, user_type });
+            await API.registerUser({ name, password, email, gender, age, user_type });
 
             Swal.fire({
                 icon: 'success',
