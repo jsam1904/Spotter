@@ -248,15 +248,25 @@ export default function FindMatches() {
 
   // Botón de filtros como acción personalizada
   const actions = (
-    <Button
-      variant="outline"
-      size="sm"
-      onClick={() => setFiltersOpen(!filtersOpen)}
-      className={isDarkMode ? "bg-gray-700 text-white" : "bg-gray-200 text-black"}
-    >
-      <Filter className="h-4 w-4 mr-2" />
-      Filtros
-    </Button>
+    <>
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => setFiltersOpen(!filtersOpen)}
+        className={isDarkMode ? "bg-gray-700 text-white" : "bg-gray-200 text-black"}
+      >
+        <Filter className="h-4 w-4 mr-2" />
+        Filtros
+      </Button>
+        <Link href="/">
+          <Button
+            variant="outline"
+            className={`hidden md:inline-flex ${isDarkMode ? "bg-gray-800 text-white hover:bg-gray-700" : "bg-[#e6790c] text-white hover:bg-rose-700"}`}
+          >
+            Cerrar sesión
+          </Button>
+        </Link>
+    </>
   );
 
   useEffect(() => {

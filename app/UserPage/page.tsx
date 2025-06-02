@@ -282,6 +282,19 @@ export default function LandingPage() {
     { href: "/Psettings", label: "Perfil" },
   ]
 
+    const actions = (
+      <>
+        <Link href="/">
+          <Button
+            variant="outline"
+            className={`hidden md:inline-flex ${isDarkMode ? "bg-gray-800 text-white hover:bg-gray-700" : "bg-[#e6790c] text-white hover:bg-rose-700"}`}
+          >
+            Cerrar sesión
+          </Button>
+        </Link>
+      </>
+    )
+
   if (loading) {
     return (
       <div>
@@ -292,7 +305,7 @@ export default function LandingPage() {
 
   return (
     <div className={`flex min-h-screen flex-col transition duration-700 ease-in-out ${isDarkMode ? "bg-[#222b4b] text-white" : "bg-white text-black"}`}>
-      <Navbar isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} links={links} />
+      <Navbar isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} links={links} actions={actions}/>
       <main className="flex-1">
         <section className="w-full py-6 md:py-10 lg:py-14 xl:py-16">
           <div className="container px-4 md:px-6">

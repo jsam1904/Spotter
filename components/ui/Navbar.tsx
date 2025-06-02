@@ -43,7 +43,6 @@ export function Navbar({ isDarkMode, toggleDarkMode, links, actions }: NavbarPro
         </nav>
         <div className="hidden md:flex items-center gap-4">
           <DarkModeToggle isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />
-          {/* Aquí se renderizan los botones personalizados si existen */}
           {actions}
         </div>
         <button
@@ -61,7 +60,6 @@ export function Navbar({ isDarkMode, toggleDarkMode, links, actions }: NavbarPro
             </Link>
           ))}
           <DarkModeToggle isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />
-          {/* También en el menú móvil */}
           {actions}
         </div>
       )}
