@@ -17,6 +17,9 @@ interface EditUserModalProps {
     age: string;
     gender: string;
     user_type: string
+    bio: string;
+    prof_pic: string;
+    about_pics: string[]
   } | null;
   onSuccess?: () => void;
 }
@@ -27,6 +30,9 @@ export default function UpdateModal({ isOpen, onClose, user, onSuccess }: EditUs
   const [gender, setGender] = useState("Masculino");
   const [age, setAge] = useState("");
   const [user_type, setUserType] = useState("User");
+  const [bio, setBio] = useState("User");
+  const [prof_pic, setProfPic] = useState("User");
+  const [about_pics, setAboutPics] = useState<string[]>([]);
 
   useEffect(() => {
     if (user) {
@@ -35,46 +41,61 @@ export default function UpdateModal({ isOpen, onClose, user, onSuccess }: EditUs
       setAge(user.age);
       setGender(user.gender);
       setUserType(user.user_type);
+      setBio(user.bio);
+      setProfPic(user.prof_pic);
+      setAboutPics(user.about_pics);
     }
   }, [user]);
 
   const handleUpdate = async (e: React.FormEvent) => {
-  e.preventDefault();
-  if (!user) return;
+    e.preventDefault();
+    if (!user) return;
 
-  const safeName = name || user.name || "Sin nombre";
-  const safeEmail = email || user.email || "sin@email.com";
-  const safeAge = age || user.age || "0";
-  const safeGender = gender || user.gender || "No especificado";
-  const safeUserType = user_type || user.user_type || "User";
+    const safeName = name || user.name || "Sin nombre";
+    const safeEmail = email || user.email || "sin@email.com";
+    const safeAge = age || user.age || "0";
+    const safeGender = gender || user.gender || "No especificado";
+    const safeUserType = user_type || user.user_type || "User";
+    const safeBio = bio || user.bio || "not Bio";
+    const safeProfPic = prof_pic || user.prof_pic || " ";
+    const safeAboutPics = Array.isArray(about_pics) && about_pics.length > 0
+      ? about_pics
+      : Array.isArray(user?.about_pics)
+        ? user.about_pics
+        : [];
 
-  try {
-    await API.updateUser(user.username, {
-      name: safeName,
-      email: safeEmail,
-      gender: safeGender,
-      age: safeAge,
-      user_type: safeUserType,
-    });
+    try {
+      await API.updateUser(user.email, {
+        name: safeName,
+        email: safeEmail,
+        gender: safeGender,
+        age: safeAge,
+        user_type: safeUserType,
+        bio: safeBio,
+        prof_pic: safeProfPic,
+        about_pics: safeAboutPics,
+        username: user.username,
+        gym: ""
+      });
 
-    Swal.fire({
-      icon: "success",
-      title: "Usuario actualizado",
-      text: "El usuario fue actualizado correctamente.",
-      timer: 2000,
-      showConfirmButton: false,
-    }).then(() => {
-      onSuccess?.();
-      onClose();
-    });
-  } catch (err) {
-    Swal.fire({
-      icon: "error",
-      title: "Error",
-      text: "No se pudo actualizar el usuario.",
-    });
-  }
-};
+      Swal.fire({
+        icon: "success",
+        title: "Usuario actualizado",
+        text: "El usuario fue actualizado correctamente.",
+        timer: 2000,
+        showConfirmButton: false,
+      }).then(() => {
+        onSuccess?.();
+        onClose();
+      });
+    } catch (err) {
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "No se pudo actualizar el usuario.",
+      });
+    }
+  };
 
   return (
     <Dialog open={isOpen} onClose={onClose} className="relative z-50">

@@ -165,6 +165,12 @@ export default class API {
     }
 
     // Gyms
+    static async getGyms() {
+        const res = await fetch(`http://localhost:3000/gym/`, { method: "GET" });
+        if (!res.ok) throw new Error("Failed to fetch verified gyms");
+        return res.json();
+    }
+
     static async getVerifiedGyms() {
         const res = await fetch(`http://localhost:3000/gym/verified`, { method: "GET" });
         if (!res.ok) throw new Error("Failed to fetch verified gyms");
